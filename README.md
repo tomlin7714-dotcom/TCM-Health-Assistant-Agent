@@ -156,6 +156,25 @@ balance智慧中医/
 
 ---
 
+## 当前完成度
+
+| 模块 | 状态 | 说明 |
+|------|:----:|------|
+| 前端 9 个页面 | ✅ | Home / Login / History / Profile / TongueScan / Herbs / HerbDetail / Recipes / Workouts |
+| 后端 10 组 API | ✅ | auth / diagnose / chat / history / favorites / reminders / feedback / herbs / recipes / workouts |
+| LangGraph Agent 工作流 | ✅ | 4 节点：症状解析→图片望诊→辨证推理→推荐生成 |
+| 多轮对话追问 | ✅ | 携带辨证上下文，支持追问饮食/运动/病理 |
+| 图片舌诊分析 | ✅ | 智谱 GLM-4V-Flash，输出舌色/苔色/舌形/寒热虚实 |
+| 用户注册登录 | ✅ | 用户名+密码注册，JWT 自动登录，多用户数据隔离 |
+| 个人中心 | ✅ | 头像本地上传，昵称在线编辑 |
+| 药材库 | ✅ | 20 味常用中药材，AI 生成实物摄影图 |
+| 追问记录持久化 | ✅ | 完整对话 JSON 存后端，恢复历史时看到所有追问 |
+| ChromaDB RAG 知识库 | 🔲 | 计划用中医经典文献构建向量库，增强辨证引用能力 |
+| 自动化测试 | 🔲 | 已有 pytest 基础测试，待扩展覆盖率 |
+| 生产部署 | 🔲 | 已有 Docker Compose，待加监控和 CI/CD |
+
+---
+
 ## 免责声明
 
 本项目是我个人学习研究和技术演示的作品。AI 辨证结果基于大语言模型推理与中医传统哲学概念，**不可作为临床诊疗依据**。如有身体不适，请及时就医。
