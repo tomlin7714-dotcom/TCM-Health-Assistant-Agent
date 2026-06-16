@@ -4,6 +4,7 @@
  */
 
 import { HerbItem, RecipeItem, WorkoutItem, ConsultationRecord, ReminderItem } from './types';
+import { HERB_IMAGES } from './herb-images';
 
 // 草药库数据（至少6种常用中草药）
 export const MOCK_HERBS: HerbItem[] = [
@@ -28,7 +29,7 @@ export const MOCK_HERBS: HerbItem[] = [
       '实证、热证及正气不虚者忌服。',
       '不宜与藜芦、五灵脂同用，服用期间忌喝茶与食萝卜。'
     ],
-    image: 'https://images.unsplash.com/photo-1584017911766-d451b3d0e843?auto=format&fit=crop&w=600&q=80'
+    image: HERB_IMAGES.h1
   },
   {
     id: 'h2',
@@ -49,7 +50,7 @@ export const MOCK_HERBS: HerbItem[] = [
     taboos: [
       '因本品滋腻，外感实热、脾虚便溏、湿热内蕴者不宜服用。'
     ],
-    image: 'https://images.unsplash.com/photo-1599307767316-776533dae0f7?auto=format&fit=crop&w=600&q=80'
+    image: HERB_IMAGES.h2
   },
   {
     id: 'h3',
@@ -71,7 +72,7 @@ export const MOCK_HERBS: HerbItem[] = [
     taboos: [
       '表实邪盛、内有实热、阳亢阴虚、气滞湿阻或痈疽初起红肿热痛者不宜服用。'
     ],
-    image: 'https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=600&q=80'
+    image: HERB_IMAGES.h3
   },
   {
     id: 'h4',
@@ -93,7 +94,7 @@ export const MOCK_HERBS: HerbItem[] = [
     taboos: [
       '阳虚体质、脾胃虚寒、食少泄泻及孕妇应慎用。'
     ],
-    image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=600&q=80'
+    image: HERB_IMAGES.h4
   },
   {
     id: 'h5',
@@ -114,7 +115,7 @@ export const MOCK_HERBS: HerbItem[] = [
     taboos: [
       '阴虚火旺、血热妄行之出血证及孕妇忌服。'
     ],
-    image: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=600&q=80'
+    image: HERB_IMAGES.h5
   },
   {
     id: 'h6',
@@ -137,7 +138,7 @@ export const MOCK_HERBS: HerbItem[] = [
       '本品有保钠排钾及水钠潴留作用，故湿盛胀满、水肿、高血压患者忌过量或长期服用。',
       '不宜与大戟、芫花、甘遂、海藻同用（俗称“十八反”）。'
     ],
-    image: 'https://images.unsplash.com/photo-1606101273045-897fa4855521?auto=format&fit=crop&w=600&q=80'
+    image: HERB_IMAGES.h6
   }
 ];
 

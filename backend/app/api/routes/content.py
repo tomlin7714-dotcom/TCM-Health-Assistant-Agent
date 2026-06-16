@@ -6,6 +6,18 @@ Phase 2 will migrate retrieval to ChromaDB RAG.
 from fastapi import APIRouter, HTTPException, Query
 from typing import List, Optional
 from pydantic import BaseModel
+import urllib.parse
+
+
+def _herb_svg(name: str, bg: str, icon: str) -> str:
+    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
+<rect width="600" height="400" fill="{bg}"/>
+<circle cx="300" cy="160" r="80" fill="rgba(255,255,255,0.25)"/>
+<text x="300" y="180" text-anchor="middle" font-size="72" fill="white">{icon}</text>
+<text x="300" y="310" text-anchor="middle" font-size="48" font-weight="bold" fill="white">&#x200E;{name}</text>
+<text x="300" y="355" text-anchor="middle" font-size="16" fill="rgba(255,255,255,0.7)">智慧中医 · 本草数据库</text>
+</svg>'''
+    return 'data:image/svg+xml,' + urllib.parse.quote(svg, safe='')
 
 
 class HerbOut(BaseModel):
@@ -75,7 +87,7 @@ HERBS: List[HerbOut] = [
                    "心神不安、失眠多梦、惊悸健忘。"],
         research="人参主要含有多种人参皂苷、人参多糖及挥发油。具有抗疲劳、增强免疫力、改善心肌缺血、延缓衰老及双向调节血压和血糖的作用。",
         taboos=["实证、热证及正气不虚者忌服。", "不宜与藜芦同用，服用期间忌喝茶与食萝卜。"],
-        image="https://images.unsplash.com/photo-1584017911766-d451b3d0e843?auto=format&fit=crop&w=600&q=80",
+        image=_herb_svg("人参", "#8B4513", "🌿"),
     ),
     HerbOut(
         id="h2", name="枸杞子", pinyin="Gouqizi", property="平",
@@ -87,7 +99,7 @@ HERBS: List[HerbOut] = [
                    "肺肾阴虚、劳嗽干咳、消渴引饮者。"],
         research="枸杞子富含枸杞多糖、β-胡萝卜素、叶黄素、多种维生素和氨基酸。能显著提高免疫功能、抗氧化、保护视网膜感光细胞。",
         taboos=["因本品滋腻，外感实热、脾虚便溏、湿热内蕴者不宜服用。"],
-        image="https://images.unsplash.com/photo-1599307767316-776533dae0f7?auto=format&fit=crop&w=600&q=80",
+        image=_herb_svg("枸杞子", "#C41E3A", "🔴"),
     ),
     HerbOut(
         id="h3", name="黄芪", pinyin="Huangqi", property="微温",
@@ -100,7 +112,7 @@ HERBS: List[HerbOut] = [
                    "气虚血滞之肢体麻木、半身不遂之气虚血瘀。"],
         research="黄芪含有黄芪多糖、黄芪皂苷、黄酮类化合物等。具有免疫调节、心血管系统保护、抗衰老、抗应激以及对肾脏的保护作用。",
         taboos=["表实邪盛、内有实热、阳亢阴虚或痈疽初起红肿热痛者不宜服用。"],
-        image="https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=600&q=80",
+        image=_herb_svg("黄芪", "#D4A017", "🟡"),
     ),
     HerbOut(
         id="h4", name="菊花", pinyin="Juhua", property="微寒",
@@ -113,7 +125,7 @@ HERBS: List[HerbOut] = [
                    "热毒疮肿、咽喉肿痛等实热证。"],
         research="菊花含有丰富的挥发油、黄酮类及绿原酸等成分。具有抗菌消炎、抗感冒病毒、扩张冠状动脉、增加冠脉血流量、降低血压的作用。",
         taboos=["阳虚体质、脾胃虚寒、食少泄泻及孕妇应慎用。"],
-        image="https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=600&q=80",
+        image=_herb_svg("菊花", "#F5F5DC", "🌼"),
     ),
     HerbOut(
         id="h5", name="干姜", pinyin="Ganjiang", property="热",
@@ -125,7 +137,7 @@ HERBS: List[HerbOut] = [
                    "肺寒津阻、寒饮咳喘、痰多清稀（小青龙汤）。"],
         research="干姜含有挥发油及姜辣素（包括姜酚、姜酮）。能促进胃液分泌和肠胃运动，具有镇吐、抗溃疡、强心、消炎止痛功效。",
         taboos=["阴虚火旺、血热妄行之出血证及孕妇忌服。"],
-        image="https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=600&q=80",
+        image=_herb_svg("干姜", "#E87511", "🟠"),
     ),
     HerbOut(
         id="h6", name="甘草", pinyin="Gancao", property="平",
@@ -139,7 +151,7 @@ HERBS: List[HerbOut] = [
         research="甘草提取物主要有甘草甜素、甘草酸、黄酮类及多糖。具有糖皮质激素样作用、抗溃疡、解痉止痛，并具有保肝和心肌细胞保护作用。",
         taboos=["湿盛胀满、水肿、高血压患者忌过量或长期服用。",
                 "不宜与大戟、芫花、甘遂、海藻同用（十八反）。"],
-        image="https://images.unsplash.com/photo-1606101273045-897fa4855521?auto=format&fit=crop&w=600&q=80",
+        image=_herb_svg("甘草", "#8B6914", "🟤"),
     ),
 ]
 
