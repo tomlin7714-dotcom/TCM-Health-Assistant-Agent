@@ -113,7 +113,7 @@ export const Home: React.FC = () => {
       showToast('AI 中医处方研判已完成！', 'success');
       const initialChat = [
         { role: 'user' as const, content: symptomText },
-        { role: 'assistant' as const, content: '**' + matched.title + '**\n\n' + matched.diagnosis + '\n\n**养生建议：**\n' + matched.advice },
+        { role: 'assistant' as const, content: matched.diagnosis },
       ];
       setChatHistory(initialChat);
       // Sync initial chat to backend + local state
@@ -193,7 +193,7 @@ export const Home: React.FC = () => {
       // Fallback: build from scratch
       restoredChat = [
         { role: 'user', content: c.symptoms },
-        { role: 'assistant', content: '**' + c.title + '**\n\n' + (c.analysis || '') + '\n\n**养生建议：**\n' + (c.suggestion && !c.suggestion.startsWith('[') ? c.suggestion : '') },
+        { role: 'assistant', content: c.analysis || c.suggestion || '' },
       ];
     }
 
