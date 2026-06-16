@@ -139,6 +139,274 @@ export const MOCK_HERBS: HerbItem[] = [
       '不宜与大戟、芫花、甘遂、海藻同用（俗称“十八反”）。'
     ],
     image: HERB_IMAGES.h6
+  },
+  {
+    id: 'h7',
+    name: '当归',
+    pinyin: 'Dāngguī',
+    property: '温',
+    flavor: '甘、辛，归肝、心、脾经',
+    origin: '《神农本草经》',
+    description: '补血活血，调经止痛，润肠通便。为补血之圣药，妇科调经之要药。',
+    isFeatured: true,
+    effect: '补血活血，调经止痛，润肠通便',
+    treatment: [
+      '血虚萎黄、头晕心悸、面色无华。',
+      '血虚血瘀之月经不调、经闭痛经。',
+      '虚寒腹痛、风湿痹痛、跌打损伤。',
+      '血虚肠燥便秘。'
+    ],
+    research: '当归含藁本内酯、阿魏酸、当归多糖等成分。具有促进造血、抗血栓、扩张血管、调节子宫平滑肌及免疫调节作用。',
+    taboos: ['湿盛中满、大便溏泻者慎用。'],
+    image: HERB_IMAGES.h7
+  },
+  {
+    id: 'h8',
+    name: '党参',
+    pinyin: 'Dǎngshēn',
+    property: '平',
+    flavor: '甘，归脾、肺经',
+    origin: '《本草从新》',
+    description: '补中益气，健脾益肺。功似人参而力弱，为平补气血之常用药。',
+    isFeatured: false,
+    effect: '补中益气，健脾益肺，养血生津',
+    treatment: [
+      '脾肺气虚之食少倦怠、咳嗽气短。',
+      '气血两虚之面色萎黄、头晕心悸。',
+      '气津两伤之口渴、内热消渴。'
+    ],
+    research: '党参含党参多糖、党参苷、生物碱等。具有增强免疫、抗疲劳、改善消化道功能及提高机体适应性等作用。',
+    taboos: ['不宜与藜芦同用。实证、热证慎用。'],
+    image: HERB_IMAGES.h8
+  },
+  {
+    id: 'h9',
+    name: '白术',
+    pinyin: 'Báizhú',
+    property: '温',
+    flavor: '甘、苦，归脾、胃经',
+    origin: '《神农本草经》',
+    description: '健脾益气，燥湿利水，止汗安胎。为脾脏补气第一要药。',
+    isFeatured: false,
+    effect: '健脾益气，燥湿利水，固表止汗',
+    treatment: [
+      '脾胃气虚之食少便溏、脘腹胀满。',
+      '脾虚水停之水肿、痰饮眩晕。',
+      '表虚自汗、脾虚胎动不安。'
+    ],
+    research: '白术含苍术酮、白术内酯、多糖等。具有调节胃肠功能、利尿、降血糖、抗炎及增强免疫作用。',
+    taboos: ['阴虚内热、津亏燥渴者慎用。'],
+    image: HERB_IMAGES.h9
+  },
+  {
+    id: 'h10',
+    name: '茯苓',
+    pinyin: 'Fúlíng',
+    property: '平',
+    flavor: '甘、淡，归心、肺、脾、肾经',
+    origin: '《神农本草经》',
+    description: '利水渗湿，健脾宁心。为利水渗湿之要药，药性平和。',
+    isFeatured: false,
+    effect: '利水渗湿，健脾和胃，宁心安神',
+    treatment: [
+      '水湿内停之水肿尿少、小便不利。',
+      '脾虚湿盛之食少便溏、痰饮眩悸。',
+      '心脾两虚之心神不安、失眠健忘。'
+    ],
+    research: '茯苓含茯苓多糖、三萜类化合物。具有显著利尿、免疫增强、抗肿瘤、保肝及镇静安神作用。',
+    taboos: ['阴虚津亏、滑精遗精者慎用。'],
+    image: HERB_IMAGES.h10
+  },
+  {
+    id: 'h11',
+    name: '陈皮',
+    pinyin: 'Chénpí',
+    property: '温',
+    flavor: '辛、苦，归脾、肺经',
+    origin: '《神农本草经》',
+    description: '理气健脾，燥湿化痰。以陈久者为佳，故名陈皮。',
+    isFeatured: false,
+    effect: '理气调中，燥湿化痰，行气止痛',
+    treatment: [
+      '脾胃气滞之脘腹胀满、食少呕恶。',
+      '湿痰壅肺之咳嗽痰多、胸闷气短。',
+      '痰湿中阻之恶心呕吐、眩晕。'
+    ],
+    research: '陈皮含挥发油（柠檬烯）、橙皮苷、川陈皮素等。具有促进消化液分泌、祛痰平喘、抗炎及降血脂作用。',
+    taboos: ['阴虚燥咳、内有实热者慎用。'],
+    image: HERB_IMAGES.h11
+  },
+  {
+    id: 'h12',
+    name: '半夏',
+    pinyin: 'Bànxià',
+    property: '温',
+    flavor: '辛，归脾、胃、肺经',
+    origin: '《神农本草经》',
+    description: '燥湿化痰，降逆止呕，消痞散结。为化痰止呕之要药。',
+    isFeatured: false,
+    effect: '燥湿化痰，降逆止呕，消痞散结',
+    treatment: [
+      '湿痰寒痰之咳嗽痰多、痰饮眩悸。',
+      '胃气上逆之恶心呕吐、呃逆嗳气。',
+      '痰热互结之胸脘痞闷、梅核气。'
+    ],
+    research: '半夏含半夏蛋白、半夏多糖、生物碱等。具有镇吐、镇咳祛痰、抗炎及抗肿瘤活性。',
+    taboos: ['阴虚燥咳、血证、孕妇慎用。不宜与川乌、草乌、附子同用（十八反）。'],
+    image: HERB_IMAGES.h12
+  },
+  {
+    id: 'h13',
+    name: '麦冬',
+    pinyin: 'Màidōng',
+    property: '微寒',
+    flavor: '甘、微苦，归心、肺、胃经',
+    origin: '《神农本草经》',
+    description: '养阴润肺，益胃生津，清心除烦。为养阴润燥之上品。',
+    isFeatured: false,
+    effect: '养阴生津，润肺清心，益胃除烦',
+    treatment: [
+      '肺阴不足之干咳痰少、咽干鼻燥。',
+      '胃阴亏损之口渴咽干、食少便秘。',
+      '心阴不足之心烦失眠、心悸怔忡。'
+    ],
+    research: '麦冬含麦冬多糖、甾体皂苷、高异黄酮等。具有增强免疫、抗心肌缺血、降血糖及抗氧化作用。',
+    taboos: ['脾胃虚寒、大便溏泻者慎用。'],
+    image: HERB_IMAGES.h13
+  },
+  {
+    id: 'h14',
+    name: '丹参',
+    pinyin: 'Dānshēn',
+    property: '微寒',
+    flavor: '苦，归心、肝经',
+    origin: '《神农本草经》',
+    description: '活血祛瘀，通经止痛，清心除烦。一味丹参，功同四物。',
+    isFeatured: false,
+    effect: '活血祛瘀，调经止痛，凉血消痈',
+    treatment: [
+      '血瘀之胸痹心痛、脘腹刺痛。',
+      '血瘀经闭、月经不调、产后瘀滞腹痛。',
+      '疮痈肿痛、热痹疼痛。',
+      '心烦不眠、心悸怔忡。'
+    ],
+    research: '丹参含丹参酮、丹酚酸、原儿茶醛等。具有扩张冠脉、抗血小板聚集、改善微循环及抗炎保肝作用。',
+    taboos: ['孕妇及月经过多者慎用。不宜与藜芦同用。'],
+    image: HERB_IMAGES.h14
+  },
+  {
+    id: 'h15',
+    name: '金银花',
+    pinyin: 'Jīnyínhuā',
+    property: '寒',
+    flavor: '甘，归肺、心、胃经',
+    origin: '《本草纲目》',
+    description: '清热解毒，疏散风热。为治疮痈肿毒之要药，亦有广谱抗菌作用。',
+    isFeatured: true,
+    effect: '清热解毒，疏散风热，凉血止痢',
+    treatment: [
+      '风热感冒之发热、咽喉肿痛。',
+      '热毒疮痈、丹毒红肿、肠痈腹痛。',
+      '热毒血痢、暑热烦渴。'
+    ],
+    research: '金银花含绿原酸、木犀草苷、挥发油等。具有广谱抗菌、抗病毒、解热抗炎及增强免疫作用。',
+    taboos: ['脾胃虚寒、疮疡气虚脓清者慎用。'],
+    image: HERB_IMAGES.h15
+  },
+  {
+    id: 'h16',
+    name: '决明子',
+    pinyin: 'Juémíngzǐ',
+    property: '微寒',
+    flavor: '甘、苦、咸，归肝、大肠经',
+    origin: '《神农本草经》',
+    description: '清热明目，润肠通便。常用于目赤肿痛及肠燥便秘。',
+    isFeatured: false,
+    effect: '清肝明目，润肠通便，降脂降压',
+    treatment: [
+      '肝火上炎之目赤肿痛、羞明多泪。',
+      '肝阳上亢之头痛眩晕。',
+      '肠燥便秘、热结便秘。'
+    ],
+    research: '决明子含蒽醌类（大黄酚、大黄素）、决明子苷等。具有降血脂、降血压、保肝及缓泻作用。',
+    taboos: ['脾胃虚寒、大便溏泻者慎用。'],
+    image: HERB_IMAGES.h16
+  },
+  {
+    id: 'h17',
+    name: '山药',
+    pinyin: 'Shānyào',
+    property: '平',
+    flavor: '甘，归脾、肺、肾经',
+    origin: '《神农本草经》',
+    description: '补脾养胃，生津益肺，补肾涩精。为药食同源之佳品。',
+    isFeatured: false,
+    effect: '健脾补肺，固肾益精，益气养阴',
+    treatment: [
+      '脾虚食少、大便溏泻、倦怠乏力。',
+      '肺虚喘咳、虚劳咳嗽。',
+      '肾虚遗精、尿频带下、消渴。'
+    ],
+    research: '山药含山药多糖、薯蓣皂苷、黏液蛋白等。具有降血糖、调节免疫、抗氧化及改善消化功能作用。',
+    taboos: ['湿盛中满、积滞便秘者慎用。'],
+    image: HERB_IMAGES.h17
+  },
+  {
+    id: 'h18',
+    name: '熟地黄',
+    pinyin: 'Shúdìhuáng',
+    property: '微温',
+    flavor: '甘，归肝、肾经',
+    origin: '《本草纲目》',
+    description: '补血滋阴，益精填髓。为滋补肾阴、填补精血之要药。',
+    isFeatured: false,
+    effect: '补血滋阴，益精填髓，养肝补肾',
+    treatment: [
+      '血虚萎黄、心悸怔忡、月经不调。',
+      '肝肾阴虚之腰膝酸软、骨蒸潮热。',
+      '精血亏虚之须发早白、眩晕耳鸣。'
+    ],
+    research: '熟地黄含梓醇、地黄多糖、地黄苷等。具有促进造血、增强免疫、抗衰老及降血糖作用。',
+    taboos: ['脾胃虚弱、气滞痰多、腹满便溏者慎用。'],
+    image: HERB_IMAGES.h18
+  },
+  {
+    id: 'h19',
+    name: '肉桂',
+    pinyin: 'Ròuguì',
+    property: '大热',
+    flavor: '辛、甘，归肾、脾、心、肝经',
+    origin: '《神农本草经》',
+    description: '补火助阳，散寒止痛，温通经脉。为治命门火衰之要药。',
+    isFeatured: false,
+    effect: '补火助阳，引火归元，散寒温经',
+    treatment: [
+      '肾阳不足之畏寒肢冷、腰膝冷痛。',
+      '脾胃虚寒之脘腹冷痛、食少泄泻。',
+      '寒凝血瘀之痛经、经闭。'
+    ],
+    research: '肉桂含桂皮醛、桂皮酸、挥发油等。具有扩张血管、促进血液循环、解热镇痛及抗菌作用。',
+    taboos: ['阴虚火旺、血热妄行、孕妇慎用。'],
+    image: HERB_IMAGES.h19
+  },
+  {
+    id: 'h20',
+    name: '酸枣仁',
+    pinyin: 'Suānzǎorén',
+    property: '平',
+    flavor: '甘、酸，归肝、胆、心经',
+    origin: '《神农本草经》',
+    description: '养心补肝，宁心安神，敛汗生津。为治虚烦不眠之要药。',
+    isFeatured: false,
+    effect: '养心安神，益肝敛汗，生津止渴',
+    treatment: [
+      '心肝血虚之虚烦不眠、惊悸多梦。',
+      '体虚自汗盗汗。',
+      '津伤口渴。'
+    ],
+    research: '酸枣仁含酸枣仁皂苷、黄酮、三萜类等。具有显著镇静催眠、抗焦虑、抗惊厥及保护心肌作用。',
+    taboos: ['实邪郁火、滑精者慎用。'],
+    image: HERB_IMAGES.h20
   }
 ];
 
