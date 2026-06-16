@@ -65,7 +65,7 @@ interface AppContextType {
   
   // 咨询历史
   history: ConsultationRecord[];
-  addConsultation: (record: Omit<ConsultationRecord, 'id' | 'date'>) => void;
+  addConsultation: (record: Omit<ConsultationRecord, 'id' | 'date'>, backendId?: string) => void;
   pendingConsultation: ConsultationRecord | null;
   resumeConsultation: (record: ConsultationRecord) => void;
   clearPendingConsultation: () => void;
@@ -269,10 +269,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return favorites[type].includes(id);
   };
 
-  const addConsultation = (record: Omit<ConsultationRecord, 'id' | 'date'>) => {
+  const addConsultation = (record: Omit<ConsultationRecord, 'id' | 'date'>, backendId?: string) => {
     const newRecord: ConsultationRecord = {
       ...record,
-      id: `c_${Date.now()}`,
+      id: backendId || `c_${Date.now()}`,
       date: new Date().toISOString().split('T')[0]
     };
     setHistory(prev => [newRecord, ...prev]);

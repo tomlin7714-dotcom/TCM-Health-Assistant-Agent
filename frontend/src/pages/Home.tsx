@@ -101,23 +101,23 @@ export const Home: React.FC = () => {
         recipeId: result.recipe_id ?? 'r1',
       };
       setAiResult(matched);
+      const cid = result.consultation_id;
+      if (cid) setConsultationId(cid);
       addConsultation({
         title: matched.title,
         type: 'tongue',
         symptoms: matched.symptoms,
         analysis: matched.diagnosis,
         suggestion: matched.advice,
-      });
+      }, cid);  // pass backend ID so record IDs match for sync
       showToast('AI 中医处方研判已完成！', 'success');
       const initialChat = [
         { role: 'user' as const, content: symptomText },
         { role: 'assistant' as const, content: '**' + matched.title + '**\n\n' + matched.diagnosis + '\n\n**养生建议：**\n' + matched.advice },
       ];
       setChatHistory(initialChat);
-      // Save consultation ID and sync to backend
-      const cid = result.consultation_id;
+      // Sync initial chat to backend
       if (cid) {
-        setConsultationId(cid);
         syncChatLog(cid, JSON.stringify(initialChat)).catch(() => {});
       }
     } catch (err: any) {
