@@ -1,0 +1,6 @@
+{
+  "name": "Balance — 智慧中医健康助手",
+  "description": "一个融合传统中医智慧与现代科技的健康管理PC端Web应用，提供智能咨询、本草精髓、膳食养生、导引锻炼、体质自测等功能。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
