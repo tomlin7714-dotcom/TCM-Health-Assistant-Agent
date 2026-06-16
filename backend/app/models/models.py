@@ -27,6 +27,7 @@ class User(Base):
     __tablename__ = "users"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    username: Mapped[str | None] = mapped_column(String(50), unique=True, nullable=True, index=True)
     phone: Mapped[str | None] = mapped_column(String(20), unique=True, nullable=True, index=True)
     name: Mapped[str] = mapped_column(String(50), default="新用户")
     avatar: Mapped[str | None] = mapped_column(Text, nullable=True)

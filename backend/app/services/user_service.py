@@ -23,6 +23,40 @@ async def get_user_by_phone(db: AsyncSession, phone: str) -> Optional[User]:
     return result.scalar_one_or_none()
 
 
+async def get_user_by_username(db: AsyncSession, username: str) -> Optional[User]:
+    result = await db.execute(select(User).where(User.username == username))
+    return result.scalar_one_or_none()
+
+
+async def register_user(db: AsyncSession, username: str, password: str) -> User:
+    from app.core.security import get_password_hash
+    existing = await get_user_by_username(db, username)
+    if existing:
+        raise ValueError("用户名已被注册")
+    user = User(
+        id=str(uuid.uuid4()),
+        username=username,
+        name=username,
+        hashed_password=get_password_hash(password),
+        level="普通会员",
+        avatar="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+    )
+    db.add(user)
+    await db.commit()
+    await db.refresh(user)
+    return user
+
+
+async def login_by_credentials(db: AsyncSession, username: str, password: str) -> User:
+    from app.core.security import verify_password
+    user = await get_user_by_username(db, username)
+    if not user or not user.hashed_password:
+        raise ValueError("用户名或密码错误")
+    if not verify_password(password, user.hashed_password):
+        raise ValueError("用户名或密码错误")
+    return user
+
+
 async def create_guest_user(db: AsyncSession) -> User:
     user = User(
         id=str(uuid.uuid4()),

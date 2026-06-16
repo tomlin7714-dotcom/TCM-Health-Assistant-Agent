@@ -6,9 +6,32 @@ import re
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
 
+class RegisterRequest(BaseModel):
+    username: str
+    password: str
+
+    @field_validator("username")
+    @classmethod
+    def validate_username(cls, v: str) -> str:
+        v = v.strip()
+        if len(v) < 2 or len(v) > 20:
+            raise ValueError("用户名需 2-20 个字符")
+        if not re.match(r"^[\w一-鿿]+$", v):
+            raise ValueError("用户名仅支持中文、英文、数字和下划线")
+        return v
+
+    @field_validator("password")
+    @classmethod
+    def validate_password(cls, v: str) -> str:
+        if len(v) < 6:
+            raise ValueError("密码至少 6 位")
+        return v
+
+
 class LoginRequest(BaseModel):
-    phone: Optional[str] = None
+    username: Optional[str] = None
     password: Optional[str] = None
+    phone: Optional[str] = None
     guest: bool = False
 
     @field_validator("phone")
@@ -29,6 +52,7 @@ class TokenResponse(BaseModel):
 
 class UserOut(BaseModel):
     id: str
+    username: Optional[str] = None
     name: str
     avatar: Optional[str]
     level: str

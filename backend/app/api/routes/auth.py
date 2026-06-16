@@ -2,9 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.database import get_db
-from app.schemas.schemas import LoginRequest, TokenResponse, UserOut, UserUpdate
+from app.schemas.schemas import LoginRequest, RegisterRequest, TokenResponse, UserOut, UserUpdate
 from app.services.user_service import (
-    create_guest_user, login_or_create_user, get_user_by_id, update_user
+    create_guest_user, login_or_create_user, get_user_by_id, update_user,
+    register_user, login_by_credentials,
 )
 from app.core.security import create_access_token, decode_access_token
 
@@ -27,14 +28,29 @@ async def get_current_user(
     return user
 
 
+@router.post("/register", response_model=TokenResponse)
+async def register(data: RegisterRequest, db: AsyncSession = Depends(get_db)):
+    try:
+        user = await register_user(db, data.username, data.password)
+    except ValueError as e:
+        raise HTTPException(status_code=409, detail=str(e))
+    token = create_access_token({"sub": user.id})
+    return TokenResponse(access_token=token, user=UserOut.model_validate(user))
+
+
 @router.post("/login", response_model=TokenResponse)
 async def login(data: LoginRequest, db: AsyncSession = Depends(get_db)):
     if data.guest:
         user = await create_guest_user(db)
+    elif data.username and data.password:
+        try:
+            user = await login_by_credentials(db, data.username, data.password)
+        except ValueError as e:
+            raise HTTPException(status_code=401, detail=str(e))
     elif data.phone:
         user = await login_or_create_user(db, data.phone)
     else:
-        raise HTTPException(status_code=400, detail="请提供手机号或选择游客登录")
+        raise HTTPException(status_code=400, detail="请提供用户名密码、手机号或选择游客登录")
 
     token = create_access_token({"sub": user.id})
     return TokenResponse(access_token=token, user=UserOut.model_validate(user))

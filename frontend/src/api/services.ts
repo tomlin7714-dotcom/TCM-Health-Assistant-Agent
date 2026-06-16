@@ -4,6 +4,7 @@ import api from './client'
 
 export interface UserOut {
   id: string
+  username: string | null
   name: string
   avatar: string | null
   level: string
@@ -19,6 +20,12 @@ export interface TokenResponse {
 
 export const loginGuest = (): Promise<TokenResponse> =>
   api.post('/auth/login', { guest: true }).then((r) => r.data)
+
+export const loginWithPassword = (username: string, password: string): Promise<TokenResponse> =>
+  api.post('/auth/login', { username, password }).then((r) => r.data)
+
+export const register = (username: string, password: string): Promise<TokenResponse> =>
+  api.post('/auth/register', { username, password }).then((r) => r.data)
 
 export const loginPhone = (phone: string): Promise<TokenResponse> =>
   api.post('/auth/login', { phone }).then((r) => r.data)

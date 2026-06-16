@@ -28,7 +28,19 @@ import { motion, AnimatePresence } from 'motion/react';
 
 // Main content dispatcher
 const ContentDispatcher: React.FC = () => {
-  const { isLoggedIn, activeTab, activePage } = useApp();
+  const { isLoggedIn, authChecked, activeTab, activePage } = useApp();
+
+  // Show nothing while checking stored token
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#fbf9f8]">
+        <div className="flex items-center gap-3 text-[#747968]">
+          <div className="w-5 h-5 border-2 border-[#7ba23f]/30 border-t-[#7ba23f] rounded-full animate-spin" />
+          <span className="text-sm font-medium">加载中...</span>
+        </div>
+      </div>
+    );
+  }
 
   // If not authenticated, render Login Page
   if (!isLoggedIn) {

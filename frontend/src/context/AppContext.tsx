@@ -6,7 +6,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ConsultationRecord, ReminderItem, FeedbackItem, ConstitutionType } from '../types';
 import { MOCK_HISTORY, DEFAULT_REMINDERS } from '../data';
-import { loginGuest as apiLoginGuest, loginPhone as apiLoginPhone } from '../api/services';
+import { loginGuest as apiLoginGuest, loginPhone as apiLoginPhone, loginWithPassword as apiLoginWithPassword, register as apiRegister, getMe as apiGetMe, getHistory as apiGetHistory } from '../api/services';
 
 // 页面类型定义
 export type AppTab = 'home' | 'herbs' | 'recipes' | 'workouts' | 'profile';
@@ -35,7 +35,9 @@ interface UserProfile {
 
 interface AppContextType {
   isLoggedIn: boolean;
-  login: (phoneOrWechat: string) => Promise<void>;
+  authChecked: boolean;
+  login: (username: string, password: string) => Promise<void>;
+  register: (username: string, password: string) => Promise<void>;
   logout: () => void;
   guestLogin: () => Promise<void>;
   user: UserProfile;
@@ -87,12 +89,13 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // 认证状态
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true); // 默认已登录，以便直接进去主页，支持注销
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [authChecked, setAuthChecked] = useState<boolean>(false);
   const [user, setUser] = useState<UserProfile>({
-    name: '林清然',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
-    level: '高级金卡调理会员',
-    constitution: '平和质'
+    name: '',
+    avatar: '',
+    level: '',
+    constitution: '未测试'
   });
 
   // 导航状态
@@ -110,7 +113,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     recipes: ['r1'],
     workouts: ['w1']
   });
-  const [history, setHistory] = useState<ConsultationRecord[]>(MOCK_HISTORY);
+  const [history, setHistory] = useState<ConsultationRecord[]>([]);
   const [pendingConsultation, setPendingConsultation] = useState<ConsultationRecord | null>(null);
   const [reminders, setReminders] = useState<ReminderItem[]>(DEFAULT_REMINDERS);
   const [feedbackList, setFeedbackList] = useState<FeedbackItem[]>([]);
@@ -155,29 +158,66 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  const login = async (phoneOrWechat: string) => {
+  // ── Auto-login: check existing token on mount ──────────────────────────
+  useEffect(() => {
+    const tryAutoLogin = async () => {
+      const token = localStorage.getItem('tcm_token');
+      if (!token) {
+        setAuthChecked(true);
+        return;
+      }
+      try {
+        const me = await apiGetMe();
+        setUser({
+          name: me.name,
+          avatar: me.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
+          level: me.level,
+          constitution: (me.constitution as ConstitutionType) || '未测试',
+        });
+        setIsLoggedIn(true);
+        // Load user's own history from backend
+        try {
+          const records = await apiGetHistory();
+          if (records && records.length > 0) setHistory(records as ConsultationRecord[]);
+        } catch {}
+      } catch {
+        localStorage.removeItem('tcm_token');
+      }
+      setAuthChecked(true);
+    };
+    tryAutoLogin();
+  }, []);
+
+  const loadHistory = async () => {
     try {
-      const res = await apiLoginPhone(phoneOrWechat);
-      localStorage.setItem('tcm_token', res.access_token);
-      setIsLoggedIn(true);
-      setUser({
-        name: res.user.name,
-        avatar: res.user.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
-        level: res.user.level,
-        constitution: (res.user.constitution as ConstitutionType) || '未测试',
-      });
-      navigateTo('home-main', 'home');
-      showToast('登录成功，欢迎开启健康之旅！', 'success');
-    } catch (err: any) {
-      // Fallback: if API unavailable, still allow login for demo
-      setIsLoggedIn(true);
-      setUser(prev => ({
-        ...prev,
-        name: phoneOrWechat.startsWith('1') ? `中医会员${phoneOrWechat.slice(-4)}` : '林清然'
-      }));
-      navigateTo('home-main', 'home');
-      showToast('登录成功（离线模式）', 'success');
-    }
+      const records = await apiGetHistory();
+      if (records && records.length > 0) setHistory(records as ConsultationRecord[]);
+    } catch {}
+  };
+
+  const applyLogin = (res: { access_token: string; user: { name: string; avatar: string | null; level: string; constitution: string; is_guest: boolean } }) => {
+    localStorage.setItem('tcm_token', res.access_token);
+    setIsLoggedIn(true);
+    setUser({
+      name: res.user.name,
+      avatar: res.user.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
+      level: res.user.level,
+      constitution: (res.user.constitution as ConstitutionType) || '未测试',
+    });
+    loadHistory();
+    navigateTo('home-main', 'home');
+  };
+
+  const login = async (username: string, password: string) => {
+    const res = await apiLoginWithPassword(username, password);
+    applyLogin(res);
+    showToast('登录成功，欢迎回来！', 'success');
+  };
+
+  const register = async (username: string, password: string) => {
+    const res = await apiRegister(username, password);
+    applyLogin(res);
+    showToast('注册成功，欢迎开启健康之旅！', 'success');
   };
 
   const logout = () => {
@@ -190,18 +230,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const guestLogin = async () => {
     try {
       const res = await apiLoginGuest();
-      localStorage.setItem('tcm_token', res.access_token);
-      setIsLoggedIn(true);
-      setUser({
-        name: res.user.name,
-        avatar: res.user.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80',
-        level: res.user.level,
-        constitution: (res.user.constitution as ConstitutionType) || '未测试',
-      });
-      navigateTo('home-main', 'home');
+      applyLogin(res);
       showToast('以游客身份登录成功', 'success');
-    } catch (err: any) {
-      // Fallback: if API unavailable, still allow guest login for demo
+    } catch {
       setIsLoggedIn(true);
       setUser({
         name: '神农山客(游客)',
@@ -309,7 +340,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   return (
     <AppContext.Provider value={{
       isLoggedIn,
+      authChecked,
       login,
+      register,
       logout,
       guestLogin,
       user,
