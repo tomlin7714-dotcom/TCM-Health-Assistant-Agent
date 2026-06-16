@@ -42,7 +42,7 @@ async def image_analyzer_node(state: DiagnoseState) -> DiagnoseState:
             image_data = image_data.split(",", 1)[1]
         result = await llm.ainvoke([
             HumanMessage(content=[
-                {"type": "text", "text": "你是中医望诊专家。分析舌苔图片：舌色、苔色、苔厚薄、齿痕裂纹，给出寒热虚实判断。200字以内中文回答。"},
+                {"type": "text", "text": "你是中医望诊专家。请详细分析舌苔图片，按以下格式输出：\n1. 舌色（淡白/淡红/红/绛红/青紫）及含义\n2. 苔色（白/黄/灰黑）及厚薄\n3. 舌形（胖大/瘦薄/齿痕/裂纹/正常）\n4. 综合判断：寒热虚实、可能的体质类型\n控制在250字以内中文回答。"},
                 {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_data}"}},
             ])
         ])

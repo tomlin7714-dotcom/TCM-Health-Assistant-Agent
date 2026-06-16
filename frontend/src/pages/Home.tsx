@@ -225,7 +225,7 @@ export const Home: React.FC = () => {
                 <p className="text-xs text-[#747968] font-medium mt-1">3分钟九大体质标准科学测试</p>
               </div>
             </div>
-            <div onClick={() => navigateTo('history', 'profile')}
+            <div onClick={() => navigateTo('tongue-scan')}
               className="bg-white border border-black/5 rounded-2xl p-6 hover:border-[#7ba23f]/40 hover:shadow-md transition-all cursor-pointer flex flex-col items-start gap-4 group">
               <div className="w-12 h-12 rounded-xl bg-[#7ba23f]/10 text-[#466805] flex items-center justify-center">
                 <Brain className="w-5 h-5" />

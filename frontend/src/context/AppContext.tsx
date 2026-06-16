@@ -23,7 +23,8 @@ export type AppPage =
   | 'about'
   | 'feedback'
   | 'constitution-test'
-  | 'reminders';
+  | 'reminders'
+  | 'tongue-scan';
 
 interface UserProfile {
   name: string;

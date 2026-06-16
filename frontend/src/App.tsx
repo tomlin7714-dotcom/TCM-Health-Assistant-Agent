@@ -23,6 +23,7 @@ import { About } from './pages/About';
 import { Feedback } from './pages/Feedback';
 import { ConstitutionTest } from './pages/ConstitutionTest';
 import { Reminders } from './pages/Reminders';
+import { TongueScan } from './pages/TongueScan';
 import { motion, AnimatePresence } from 'motion/react';
 
 // Main content dispatcher
@@ -72,6 +73,8 @@ const ContentDispatcher: React.FC = () => {
         return <ConstitutionTest />;
       case 'reminders':
         return <Reminders />;
+      case 'tongue-scan':
+        return <TongueScan />;
       default:
         return <Home />;
     }
