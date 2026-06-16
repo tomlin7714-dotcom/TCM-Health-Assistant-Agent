@@ -12,7 +12,7 @@ import { diagnose, loginGuest, sendChatMessage, syncChatLog } from '../api/servi
 import type { ChatMessage } from '../api/services';
 
 export const Home: React.FC = () => {
-  const { navigateTo, addConsultation, history, showToast, pendingConsultation, clearPendingConsultation } = useApp();
+  const { navigateTo, addConsultation, history, showToast, pendingConsultation, clearPendingConsultation, updateConsultationSuggestion } = useApp();
   const [symptomText, setSymptomText] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -116,9 +116,11 @@ export const Home: React.FC = () => {
         { role: 'assistant' as const, content: '**' + matched.title + '**\n\n' + matched.diagnosis + '\n\n**养生建议：**\n' + matched.advice },
       ];
       setChatHistory(initialChat);
-      // Sync initial chat to backend
+      // Sync initial chat to backend + local state
       if (cid) {
-        syncChatLog(cid, JSON.stringify(initialChat)).catch(() => {});
+        const json = JSON.stringify(initialChat);
+        syncChatLog(cid, json).catch(() => {});
+        updateConsultationSuggestion(cid, json);
       }
     } catch (err: any) {
       showToast(err?.response?.data?.detail ?? 'AI 服务暂时不可用，请稍后重试', 'error');
@@ -145,9 +147,11 @@ export const Home: React.FC = () => {
       });
       const fullHistory = [...updatedHistory, { role: 'assistant' as const, content: res.reply }];
       setChatHistory(fullHistory);
-      // Sync full conversation to backend
+      // Sync full conversation to backend + local state
       if (consultationId) {
-        syncChatLog(consultationId, JSON.stringify(fullHistory)).catch(() => {});
+        const json = JSON.stringify(fullHistory);
+        syncChatLog(consultationId, json).catch(() => {});
+        updateConsultationSuggestion(consultationId, json);
       }
     } catch (err: any) {
       setChatHistory([...updatedHistory, { role: 'assistant', content: '抱歉，暂时无法回复。请稍后重试。' }]);

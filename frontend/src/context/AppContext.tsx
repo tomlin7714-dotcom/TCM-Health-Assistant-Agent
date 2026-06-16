@@ -69,6 +69,7 @@ interface AppContextType {
   pendingConsultation: ConsultationRecord | null;
   resumeConsultation: (record: ConsultationRecord) => void;
   clearPendingConsultation: () => void;
+  updateConsultationSuggestion: (consultId: string, newSuggestion: string) => void;
   
   // 提醒
   reminders: ReminderItem[];
@@ -287,6 +288,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setPendingConsultation(null);
   };
 
+  const updateConsultationSuggestion = (consultId: string, newSuggestion: string) => {
+    setHistory(prev => prev.map(r => r.id === consultId ? { ...r, suggestion: newSuggestion } : r));
+  };
+
   const toggleReminder = (id: string) => {
     setReminders(prev => prev.map(item => {
       if (item.id === id) {
@@ -363,6 +368,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       pendingConsultation,
       resumeConsultation,
       clearPendingConsultation,
+      updateConsultationSuggestion,
       reminders,
       toggleReminder,
       addReminder,
