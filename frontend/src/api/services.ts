@@ -146,6 +146,7 @@ export const submitFeedback = (data: { type: string; content: string; email?: st
 export interface DiagnoseResult {
   title: string; diagnosis: string; advice: string
   herb_id?: string; recipe_id?: string; constitution?: string
+  consultation_id?: string
 }
 
 export const diagnose = (symptoms: string, image_base64?: string): Promise<DiagnoseResult> =>
@@ -171,6 +172,9 @@ export const sendChatMessage = (data: {
   new_message: string
 }): Promise<ChatResponse> =>
   api.post('/chat', data).then((r) => r.data)
+
+export const syncChatLog = (consultationId: string, chatLog: string): Promise<void> =>
+  api.put('/chat/sync', { consultation_id: consultationId, chat_log: chatLog })
 
 
 // ── Constitution ──────────────────────────────────────────────────────────────

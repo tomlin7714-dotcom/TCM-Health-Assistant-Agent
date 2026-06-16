@@ -170,6 +170,7 @@ class DiagnoseResult(BaseModel):
     herb_id: Optional[str] = None
     recipe_id: Optional[str] = None
     constitution: Optional[str] = None
+    consultation_id: Optional[str] = None
 
 
 # ── Chat (multi-turn conversation) ────────────────────────────────────────────

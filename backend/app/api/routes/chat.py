@@ -1,9 +1,15 @@
 """
 Multi-turn conversation — follow-up questions after initial diagnosis.
 """
+import json
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from pydantic import BaseModel
 from app.schemas.schemas import ChatRequest, ChatResponse
 from app.api.routes.auth import get_current_user
+from app.db.database import get_db
+from app.models.models import Consultation
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -66,3 +72,29 @@ async def chat(
         return ChatResponse(reply=result.content)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Chat error: {str(e)}")
+
+
+class ChatSyncRequest(BaseModel):
+    """Sync full chat log to an existing consultation record."""
+    consultation_id: str
+    chat_log: str  # JSON-stringified chat history
+
+
+@router.put("/sync")
+async def sync_chat_log(
+    data: ChatSyncRequest,
+    current_user=Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    result = await db.execute(
+        select(Consultation).where(
+            Consultation.id == data.consultation_id,
+            Consultation.user_id == current_user.id,
+        )
+    )
+    record = result.scalar_one_or_none()
+    if not record:
+        raise HTTPException(status_code=404, detail="咨询记录不存在")
+    record.suggestion = data.chat_log
+    await db.commit()
+    return {"status": "ok"}

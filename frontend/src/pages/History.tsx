@@ -8,6 +8,20 @@ import { useApp } from '../context/AppContext';
 import { ArrowLeft, Clock, Search, HelpCircle, Activity, Sparkles, Star, Calendar } from 'lucide-react';
 import { motion } from 'motion/react';
 
+function extractSuggestion(suggestion: string): string {
+  // If it's a JSON chat log, extract the AI responses for readable display
+  try {
+    if (suggestion.startsWith('[')) {
+      const log = JSON.parse(suggestion);
+      return log
+        .filter((m: any) => m.role === 'assistant')
+        .map((m: any) => m.content.replace(/\*\*/g, '').replace(/\n\n/g, '\n'))
+        .join('\n---\n');
+    }
+  } catch {}
+  return suggestion;
+}
+
 export const History: React.FC = () => {
   const { history, goBack, navigateTo, resumeConsultation } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
@@ -153,8 +167,8 @@ export const History: React.FC = () => {
                     <span className="text-[10px] font-black text-amber-800 block uppercase">
                       📜 每日药食、功法调养建议：
                     </span>
-                    <p className="text-xs text-amber-900 leading-relaxed font-semibold mt-1">
-                      {item.suggestion}
+                    <p className="text-xs text-amber-900 leading-relaxed font-semibold mt-1 whitespace-pre-wrap">
+                      {extractSuggestion(item.suggestion)}
                     </p>
                   </div>
 

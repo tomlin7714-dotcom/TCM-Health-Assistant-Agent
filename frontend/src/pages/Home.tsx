@@ -8,7 +8,7 @@ import { useApp } from '../context/AppContext';
 import { Brain, Activity, Star, Send, Sparkles, Image, X, MessageCircle, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MOCK_HERBS, MOCK_RECIPES } from '../data';
-import { diagnose, loginGuest, sendChatMessage } from '../api/services';
+import { diagnose, loginGuest, sendChatMessage, syncChatLog } from '../api/services';
 import type { ChatMessage } from '../api/services';
 
 export const Home: React.FC = () => {
@@ -30,6 +30,7 @@ export const Home: React.FC = () => {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [followUpText, setFollowUpText] = useState('');
   const [isFollowUpLoading, setIsFollowUpLoading] = useState(false);
+  const [consultationId, setConsultationId] = useState<string | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   const quickSymptoms = [
@@ -108,10 +109,17 @@ export const Home: React.FC = () => {
         suggestion: matched.advice,
       });
       showToast('AI 中医处方研判已完成！', 'success');
-      setChatHistory([
-        { role: 'user', content: symptomText },
-        { role: 'assistant', content: '**' + matched.title + '**\n\n' + matched.diagnosis + '\n\n**养生建议：**\n' + matched.advice },
-      ]);
+      const initialChat = [
+        { role: 'user' as const, content: symptomText },
+        { role: 'assistant' as const, content: '**' + matched.title + '**\n\n' + matched.diagnosis + '\n\n**养生建议：**\n' + matched.advice },
+      ];
+      setChatHistory(initialChat);
+      // Save consultation ID and sync to backend
+      const cid = result.consultation_id;
+      if (cid) {
+        setConsultationId(cid);
+        syncChatLog(cid, JSON.stringify(initialChat)).catch(() => {});
+      }
     } catch (err: any) {
       showToast(err?.response?.data?.detail ?? 'AI 服务暂时不可用，请稍后重试', 'error');
     } finally {
@@ -135,7 +143,12 @@ export const Home: React.FC = () => {
         conversation_history: chatHistory,
         new_message: followUpText,
       });
-      setChatHistory([...updatedHistory, { role: 'assistant', content: res.reply }]);
+      const fullHistory = [...updatedHistory, { role: 'assistant' as const, content: res.reply }];
+      setChatHistory(fullHistory);
+      // Sync full conversation to backend
+      if (consultationId) {
+        syncChatLog(consultationId, JSON.stringify(fullHistory)).catch(() => {});
+      }
     } catch (err: any) {
       setChatHistory([...updatedHistory, { role: 'assistant', content: '抱歉，暂时无法回复。请稍后重试。' }]);
       showToast(err?.response?.data?.detail ?? '追问发送失败', 'error');
@@ -147,6 +160,7 @@ export const Home: React.FC = () => {
   const handleNewSession = () => {
     setAiResult(null);
     setChatHistory([]);
+    setConsultationId(null);
     setSymptomText('');
     setUploadedImage(null);
     setImageName('');
@@ -161,23 +175,38 @@ export const Home: React.FC = () => {
   useEffect(() => {
     if (!pendingConsultation) return;
     const c = pendingConsultation;
+    setConsultationId(c.id);
+
+    // Try to restore full chat log from saved suggestion
+    let restoredChat: ChatMessage[] = [];
+    try {
+      if (c.suggestion && c.suggestion.startsWith('[')) {
+        restoredChat = JSON.parse(c.suggestion);
+      }
+    } catch {}
+
+    if (restoredChat.length === 0) {
+      // Fallback: build from scratch
+      restoredChat = [
+        { role: 'user', content: c.symptoms },
+        { role: 'assistant', content: '**' + c.title + '**\n\n' + (c.analysis || '') + '\n\n**养生建议：**\n' + (c.suggestion && !c.suggestion.startsWith('[') ? c.suggestion : '') },
+      ];
+    }
+
     setAiResult({
       symptoms: c.symptoms,
       title: c.title,
       diagnosis: c.analysis || '',
-      advice: c.suggestion,
+      advice: c.suggestion || '',
       herbId: 'h1',
       recipeId: 'r1',
     });
-    setChatHistory([
-      { role: 'user', content: c.symptoms },
-      { role: 'assistant', content: '**' + c.title + '**\n\n' + (c.analysis || '') + '\n\n**养生建议：**\n' + c.suggestion },
-    ]);
+    setChatHistory(restoredChat);
     setSymptomText('');
     setUploadedImage(null);
     setImageName('');
     clearPendingConsultation();
-    showToast('已恢复历史辨证，可继续追问', 'info');
+    showToast('已恢复完整对话记录，可继续追问', 'info');
   }, [pendingConsultation]);
 
   const getHerbNameAndImg = (id: string) => {

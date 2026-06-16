@@ -73,13 +73,14 @@ async def diagnose_combined(
 
     result = await _run_agent(data.symptoms, data.image_base64)
 
-    await create_consultation(db, current_user.id, ConsultationCreate(
+    consult = await create_consultation(db, current_user.id, ConsultationCreate(
         title=result.title,
         type="tongue",
         symptoms=data.symptoms,
         analysis=result.diagnosis,
         suggestion=result.advice or "",
     ))
+    result.consultation_id = consult.id
     return result
 
 
@@ -92,13 +93,14 @@ async def diagnose_symptom(
     if not data.symptoms.strip():
         raise HTTPException(status_code=400, detail="请输入症状描述")
     result = await _run_agent(data.symptoms, None)
-    await create_consultation(db, current_user.id, ConsultationCreate(
+    consult = await create_consultation(db, current_user.id, ConsultationCreate(
         title=result.title,
         type="tongue",
         symptoms=data.symptoms,
         analysis=result.diagnosis,
         suggestion=result.advice or "",
     ))
+    result.consultation_id = consult.id
     return result
 
 
@@ -115,11 +117,12 @@ async def diagnose_image(
         raise HTTPException(status_code=400, detail="图片大小不能超过 5MB")
     image_b64 = base64.b64encode(content).decode("utf-8")
     result = await _run_agent("请根据图片进行中医望诊分析", image_b64)
-    await create_consultation(db, current_user.id, ConsultationCreate(
+    consult = await create_consultation(db, current_user.id, ConsultationCreate(
         title=result.title,
         type="tongue",
         symptoms="上传舌苔/检验报告图片",
         analysis=result.diagnosis,
         suggestion=result.advice or "",
     ))
+    result.consultation_id = consult.id
     return result
