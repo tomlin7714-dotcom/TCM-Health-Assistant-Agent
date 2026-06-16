@@ -1,120 +1,105 @@
 """
-TCM Diagnostic Agent - compatible with langgraph 1.x and langchain-core 1.x
+TCM ReAct Agent — LLM autonomously decides when to call tools vs respond to user.
+Uses LangGraph with tool-calling loop: Think → Act → Observe → Think → Respond.
 """
-from typing import TypedDict, Optional
+from typing import TypedDict, Annotated, Optional
+from langgraph.graph import StateGraph, END
+from langgraph.graph.message import add_messages
+from langchain_core.messages import HumanMessage, SystemMessage, AIMessage, ToolMessage
 
 
-class DiagnoseState(TypedDict):
-    symptoms: str
-    image_base64: Optional[str]
-    parsed_symptoms: Optional[str]
-    image_analysis: Optional[str]
-    diagnosis: Optional[str]
-    advice: Optional[str]
-    title: Optional[str]
-    herb_id: Optional[str]
-    recipe_id: Optional[str]
-    constitution: Optional[str]
-    error: Optional[str]
+SYSTEM_PROMPT = """你是一位精通中医辨证论治的资深中医师，熟读《黄帝内经》《伤寒杂病论》等经典。你拥有以下工具来辅助诊断：
+
+可用工具：
+- search_herbs: 搜索药材数据库，查找药材功效和用法
+- search_recipes: 搜索药膳食谱，推荐食疗方案
+- search_workouts: 搜索导引功法，推荐运动调理
+- assess_constitution: 根据症状判断体质类型
+- remember_user_context: 记录用户体质和偏好
+
+你的工作方式：
+1. 用户描述症状后，先用 assess_constitution 判断体质
+2. 根据需要调用 search_herbs、search_recipes、search_workouts 查找对应的调理方案
+3. 如果信息不够充分，主动追问用户
+4. 综合所有信息后，给出完整的辨证分析和调养建议
+5. 用 remember_user_context 记录用户体质，方便下次参考
+
+回答要求：
+- 辨证名称简洁有力（不超过15字）
+- 病机分析引用中医理论，但要让普通人听懂
+- 养生建议具体可操作
+- 结尾温馨提示：如症状持续或加重请就医"""
 
 
-async def symptom_parser_node(state: DiagnoseState) -> DiagnoseState:
-    from langchain_core.messages import HumanMessage, SystemMessage
+class AgentState(TypedDict):
+    messages: Annotated[list, add_messages]
+    user_context: Optional[str]
+
+
+def _load_tools():
+    from app.agent.tools.tcm_tools import TCM_TOOLS
+    return TCM_TOOLS
+
+
+async def agent_node(state: AgentState) -> AgentState:
+    """LLM call with tool binding — decides whether to respond or call tools."""
     from app.agent.llm import get_text_llm
-    from app.agent.prompts import SYMPTOM_PARSER_PROMPT
-    llm = get_text_llm()
-    result = await llm.ainvoke([
-        SystemMessage(content=SYMPTOM_PARSER_PROMPT),
-        HumanMessage(content=f"用户描述的症状：{state['symptoms']}"),
-    ])
-    return {**state, "parsed_symptoms": result.content}
+    tools = _load_tools()
+    llm = get_text_llm().bind_tools(tools)
+
+    messages = [SystemMessage(content=SYSTEM_PROMPT)] + state["messages"]
+
+    # Inject user context if available
+    if state.get("user_context"):
+        messages.insert(1, SystemMessage(content=f"用户已记录的体质/偏好信息：{state['user_context']}"))
+
+    response = await llm.ainvoke(messages)
+    return {"messages": [response]}
 
 
-async def image_analyzer_node(state: DiagnoseState) -> DiagnoseState:
-    if not state.get("image_base64"):
-        return {**state, "image_analysis": None}
-    try:
-        from langchain_core.messages import HumanMessage
-        from app.agent.llm import get_vision_llm
-        llm = get_vision_llm()
-        image_data = state["image_base64"]
-        if "," in image_data:
-            image_data = image_data.split(",", 1)[1]
-        result = await llm.ainvoke([
-            HumanMessage(content=[
-                {"type": "text", "text": "你是中医望诊专家。请详细分析舌苔图片，按以下格式输出：\n1. 舌色（淡白/淡红/红/绛红/青紫）及含义\n2. 苔色（白/黄/灰黑）及厚薄\n3. 舌形（胖大/瘦薄/齿痕/裂纹/正常）\n4. 综合判断：寒热虚实、可能的体质类型\n控制在250字以内中文回答。"},
-                {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_data}"}},
-            ])
-        ])
-        return {**state, "image_analysis": result.content}
-    except Exception as e:
-        return {**state, "image_analysis": f"图片分析暂时不可用：{str(e)}"}
+def should_continue(state: AgentState) -> str:
+    """Check if the last message has tool calls — if so, route to tools node."""
+    last_msg = state["messages"][-1]
+    if hasattr(last_msg, "tool_calls") and last_msg.tool_calls:
+        return "tools"
+    return "end"
 
 
-async def tcm_diagnoser_node(state: DiagnoseState) -> DiagnoseState:
-    from langchain_core.messages import HumanMessage, SystemMessage
-    from app.agent.llm import get_text_llm
-    from app.agent.prompts import TCM_DIAGNOSE_PROMPT
-    llm = get_text_llm()
-    combined = f"症状分析：{state.get('parsed_symptoms', state['symptoms'])}"
-    if state.get("image_analysis"):
-        combined += f"\n\n望诊分析：{state['image_analysis']}"
-    result = await llm.ainvoke([
-        SystemMessage(content=TCM_DIAGNOSE_PROMPT),
-        HumanMessage(content=combined),
-    ])
-    content = result.content
-    lines = [l.strip() for l in content.split("\n") if l.strip()]
-    title = lines[0].lstrip("#").strip() if lines else "中医辨证分析"
-    return {**state, "diagnosis": content, "title": title}
+async def tools_node(state: AgentState) -> AgentState:
+    """Execute tool calls from the LLM."""
+    from langchain_core.messages import ToolMessage
+    tools = {t.name: t for t in _load_tools()}
 
+    last_msg = state["messages"][-1]
+    tool_messages = []
 
-async def recommendation_generator_node(state: DiagnoseState) -> DiagnoseState:
-    from langchain_core.messages import HumanMessage, SystemMessage
-    from app.agent.llm import get_text_llm
-    from app.agent.prompts import RECOMMENDATION_PROMPT
-    llm = get_text_llm()
-    result = await llm.ainvoke([
-        SystemMessage(content=RECOMMENDATION_PROMPT),
-        HumanMessage(content=f"辨证结果：{state.get('diagnosis', '')}\n\n原始症状：{state['symptoms']}"),
-    ])
-    herb_id, recipe_id, constitution = _map_to_content(state.get("diagnosis", ""))
-    return {**state, "advice": result.content, "herb_id": herb_id, "recipe_id": recipe_id, "constitution": constitution}
+    for tc in last_msg.tool_calls:
+        tool = tools.get(tc["name"])
+        if tool:
+            try:
+                result = await tool.ainvoke(tc["args"])
+                tool_messages.append(ToolMessage(content=str(result), tool_call_id=tc["id"]))
+            except Exception as e:
+                tool_messages.append(ToolMessage(content=f"工具调用出错：{e}", tool_call_id=tc["id"]))
 
-
-def _map_to_content(diagnosis: str) -> tuple:
-    d = diagnosis
-    if any(k in d for k in ["阳虚", "寒", "怕冷", "手脚冰"]):
-        return "h5", "r1", "阳虚质"
-    if any(k in d for k in ["气虚", "乏力", "疲倦", "懒言"]):
-        return "h3", "r3", "气虚质"
-    if any(k in d for k in ["阴虚", "失眠", "多梦", "眼干", "目涩"]):
-        return "h2", "r2", "阴虚质"
-    if any(k in d for k in ["湿热", "痰湿", "湿", "胀"]):
-        return "h6", "r3", "痰湿质"
-    return "h1", "r2", "平和质"
-
-
-def should_analyze_image(state: DiagnoseState) -> str:
-    return "image_analyzer" if state.get("image_base64") else "tcm_diagnoser"
+    return {"messages": tool_messages}
 
 
 def build_tcm_agent():
-    from langgraph.graph import StateGraph, END
-    graph = StateGraph(DiagnoseState)
-    graph.add_node("symptom_parser", symptom_parser_node)
-    graph.add_node("image_analyzer", image_analyzer_node)
-    graph.add_node("tcm_diagnoser", tcm_diagnoser_node)
-    graph.add_node("recommendation_generator", recommendation_generator_node)
-    graph.set_entry_point("symptom_parser")
+    graph = StateGraph(AgentState)
+
+    graph.add_node("agent", agent_node)
+    graph.add_node("tools", tools_node)
+
+    graph.set_entry_point("agent")
+
     graph.add_conditional_edges(
-        "symptom_parser",
-        should_analyze_image,
-        {"image_analyzer": "image_analyzer", "tcm_diagnoser": "tcm_diagnoser"},
+        "agent",
+        should_continue,
+        {"tools": "tools", "end": END},
     )
-    graph.add_edge("image_analyzer", "tcm_diagnoser")
-    graph.add_edge("tcm_diagnoser", "recommendation_generator")
-    graph.add_edge("recommendation_generator", END)
+    graph.add_edge("tools", "agent")
+
     return graph.compile()
 
 

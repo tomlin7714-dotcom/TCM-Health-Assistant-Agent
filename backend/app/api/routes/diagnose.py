@@ -35,28 +35,58 @@ async def diagnose_test():
 
 
 async def _run_agent(symptoms: str, image_base64: str | None) -> DiagnoseResult:
+    """Run the ReAct agent. If image provided, pre-analyze it and add to context."""
+    from langchain_core.messages import HumanMessage
+
     try:
+        user_message = symptoms
+
+        # If image provided, analyze it first via Zhipu
+        if image_base64:
+            try:
+                from app.agent.llm import get_vision_llm
+                from langchain_core.messages import HumanMessage as HMsg
+                vision_llm = get_vision_llm()
+                img_data = image_base64
+                if "," in img_data:
+                    img_data = img_data.split(",", 1)[1]
+                vision_result = await vision_llm.ainvoke([
+                    HMsg(content=[
+                        {"type": "text", "text": "你是中医望诊专家。请详细分析舌苔图片：舌色、苔色、舌形、齿痕裂纹，给出寒热虚实判断。200字以内中文回答。"},
+                        {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{img_data}"}},
+                    ])
+                ])
+                user_message = f"【舌苔望诊结果】{vision_result.content}\n\n【用户症状描述】{symptoms}\n\n请综合望诊和症状进行辨证分析。"
+            except Exception:
+                pass  # If vision fails, continue with text only
+
         agent = get_tcm_agent()
         state = await agent.ainvoke({
-            "symptoms": symptoms,
-            "image_base64": image_base64,
-            "parsed_symptoms": None,
-            "image_analysis": None,
-            "diagnosis": None,
-            "advice": None,
-            "title": None,
-            "herb_id": None,
-            "recipe_id": None,
-            "constitution": None,
-            "error": None,
+            "messages": [HumanMessage(content=user_message)],
+            "user_context": None,
         })
+
+        # Extract final AI response
+        final_content = ""
+        tool_calls_made = []
+        for msg in state["messages"]:
+            if hasattr(msg, "tool_calls") and msg.tool_calls:
+                tool_calls_made.extend(tc["name"] for tc in msg.tool_calls)
+            if isinstance(msg, type(state["messages"][-1])) and hasattr(msg, "content") and msg.content and not hasattr(msg, "tool_calls"):
+                final_content = msg.content
+
+        if not final_content:
+            final_content = str(state["messages"][-1].content) if hasattr(state["messages"][-1], "content") else "辨证分析完成，请查看结果。"
+
+        # Parse title from content (first line or extract)
+        lines = [l.strip() for l in final_content.split("\n") if l.strip()]
+        title = lines[0].lstrip("#").strip()[:30] if lines else "AI 中医辨证分析"
+
         return DiagnoseResult(
-            title=state.get("title") or "AI 中医辨证分析",
-            diagnosis=state.get("diagnosis") or "",
-            advice=state.get("advice") or "",
-            herb_id=state.get("herb_id"),
-            recipe_id=state.get("recipe_id"),
-            constitution=state.get("constitution"),
+            title=title,
+            diagnosis=final_content,
+            advice=final_content,  # Unified response
+            constitution="待测",
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Agent error: {str(e)}\n{traceback.format_exc()}")
