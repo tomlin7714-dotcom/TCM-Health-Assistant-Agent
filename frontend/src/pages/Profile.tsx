@@ -48,9 +48,8 @@ export const Profile: React.FC = () => {
     setUploading(true);
     try {
       const res = await uploadAvatar(file);
-      const fullUrl = res.avatar_url.startsWith('http') ? res.avatar_url : window.location.origin + res.avatar_url;
-      updateUser({ avatar: fullUrl });
-      setEditAvatar(fullUrl);
+      updateUser({ avatar: res.avatar_url });
+      setEditAvatar(res.avatar_url);
       showToast('头像上传成功！', 'success');
     } catch {
       showToast('上传失败，请重试', 'error');
