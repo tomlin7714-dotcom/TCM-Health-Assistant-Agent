@@ -12,7 +12,7 @@ import { diagnose, loginGuest, sendChatMessage } from '../api/services';
 import type { ChatMessage } from '../api/services';
 
 export const Home: React.FC = () => {
-  const { navigateTo, addConsultation, history, showToast } = useApp();
+  const { navigateTo, addConsultation, history, showToast, pendingConsultation, clearPendingConsultation } = useApp();
   const [symptomText, setSymptomText] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -156,6 +156,29 @@ export const Home: React.FC = () => {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatHistory, isFollowUpLoading]);
+
+  // Load a past consultation to resume chatting
+  useEffect(() => {
+    if (!pendingConsultation) return;
+    const c = pendingConsultation;
+    setAiResult({
+      symptoms: c.symptoms,
+      title: c.title,
+      diagnosis: c.analysis || '',
+      advice: c.suggestion,
+      herbId: 'h1',
+      recipeId: 'r1',
+    });
+    setChatHistory([
+      { role: 'user', content: c.symptoms },
+      { role: 'assistant', content: '**' + c.title + '**\n\n' + (c.analysis || '') + '\n\n**养生建议：**\n' + c.suggestion },
+    ]);
+    setSymptomText('');
+    setUploadedImage(null);
+    setImageName('');
+    clearPendingConsultation();
+    showToast('已恢复历史辨证，可继续追问', 'info');
+  }, [pendingConsultation]);
 
   const getHerbNameAndImg = (id: string) => {
     const h = MOCK_HERBS.find(item => item.id === id);

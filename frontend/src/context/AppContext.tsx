@@ -63,6 +63,9 @@ interface AppContextType {
   // 咨询历史
   history: ConsultationRecord[];
   addConsultation: (record: Omit<ConsultationRecord, 'id' | 'date'>) => void;
+  pendingConsultation: ConsultationRecord | null;
+  resumeConsultation: (record: ConsultationRecord) => void;
+  clearPendingConsultation: () => void;
   
   // 提醒
   reminders: ReminderItem[];
@@ -107,9 +110,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     workouts: ['w1']
   });
   const [history, setHistory] = useState<ConsultationRecord[]>(MOCK_HISTORY);
+  const [pendingConsultation, setPendingConsultation] = useState<ConsultationRecord | null>(null);
   const [reminders, setReminders] = useState<ReminderItem[]>(DEFAULT_REMINDERS);
   const [feedbackList, setFeedbackList] = useState<FeedbackItem[]>([]);
-  
+
   // Toast
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
@@ -242,6 +246,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setHistory(prev => [newRecord, ...prev]);
   };
 
+  const resumeConsultation = (record: ConsultationRecord) => {
+    setPendingConsultation(record);
+    navigateTo('home-main', 'home');
+  };
+
+  const clearPendingConsultation = () => {
+    setPendingConsultation(null);
+  };
+
   const toggleReminder = (id: string) => {
     setReminders(prev => prev.map(item => {
       if (item.id === id) {
@@ -313,6 +326,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       isFavorite,
       history,
       addConsultation,
+      pendingConsultation,
+      resumeConsultation,
+      clearPendingConsultation,
       reminders,
       toggleReminder,
       addReminder,

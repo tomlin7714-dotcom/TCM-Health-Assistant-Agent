@@ -9,7 +9,7 @@ import { ArrowLeft, Clock, Search, HelpCircle, Activity, Sparkles, Star, Calenda
 import { motion } from 'motion/react';
 
 export const History: React.FC = () => {
-  const { history, goBack, navigateTo } = useApp();
+  const { history, goBack, navigateTo, resumeConsultation } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<string>('全部');
 
@@ -156,6 +156,17 @@ export const History: React.FC = () => {
                     <p className="text-xs text-amber-900 leading-relaxed font-semibold mt-1">
                       {item.suggestion}
                     </p>
+                  </div>
+
+                  {/* Resume button */}
+                  <div className="pt-2 border-t border-black/[0.03]">
+                    <button
+                      onClick={() => resumeConsultation(item)}
+                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#7ba23f]/10 hover:bg-[#7ba23f]/20 text-[#466805] text-xs font-bold transition-all cursor-pointer"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      继续追问此辨证
+                    </button>
                   </div>
                 </div>
 
