@@ -145,6 +145,27 @@ export const diagnose = (symptoms: string, image_base64?: string): Promise<Diagn
   api.post('/diagnose/combined', { symptoms, image_base64 }).then((r) => r.data)
 
 
+// ── Chat (multi-turn conversation) ────────────────────────────────────────────
+
+export interface ChatMessage {
+  role: 'user' | 'assistant'
+  content: string
+}
+
+export interface ChatResponse {
+  reply: string
+}
+
+export const sendChatMessage = (data: {
+  symptoms: string
+  diagnosis: string
+  advice: string
+  conversation_history: ChatMessage[]
+  new_message: string
+}): Promise<ChatResponse> =>
+  api.post('/chat', data).then((r) => r.data)
+
+
 // ── Constitution ──────────────────────────────────────────────────────────────
 
 export interface ConstitutionResult { constitution: string; description: string; advice: string }

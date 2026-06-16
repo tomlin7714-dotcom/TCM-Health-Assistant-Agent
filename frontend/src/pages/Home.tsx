@@ -3,12 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
-import { Brain, Activity, Star, Send, Sparkles, Image, X } from 'lucide-react';
+import { Brain, Activity, Star, Send, Sparkles, Image, X, MessageCircle, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MOCK_HERBS, MOCK_RECIPES } from '../data';
-import { diagnose, loginGuest } from '../api/services';
+import { diagnose, loginGuest, sendChatMessage } from '../api/services';
+import type { ChatMessage } from '../api/services';
 
 export const Home: React.FC = () => {
   const { navigateTo, addConsultation, history, showToast } = useApp();
@@ -25,6 +26,11 @@ export const Home: React.FC = () => {
     herbId: string;
     recipeId: string;
   } | null>(null);
+
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
+  const [followUpText, setFollowUpText] = useState('');
+  const [isFollowUpLoading, setIsFollowUpLoading] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
   const quickSymptoms = [
     { label: '手脚冰冷、怕冷畏寒', text: '平时特别怕冷，经常手脚冰凉，冬天钻进被窝很久也捂不暖，稍微吃点冷的东西就觉得肚子隐隐作痛、肚子胀气。' },
@@ -102,12 +108,54 @@ export const Home: React.FC = () => {
         suggestion: matched.advice,
       });
       showToast('AI 中医处方研判已完成！', 'success');
+      setChatHistory([
+        { role: 'user', content: symptomText },
+        { role: 'assistant', content: '**' + matched.title + '**\n\n' + matched.diagnosis + '\n\n**养生建议：**\n' + matched.advice },
+      ]);
     } catch (err: any) {
       showToast(err?.response?.data?.detail ?? 'AI 服务暂时不可用，请稍后重试', 'error');
     } finally {
       setIsAnalyzing(false);
     }
   };
+
+  const handleFollowUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!followUpText.trim() || !aiResult || isFollowUpLoading) return;
+    const newMsg: ChatMessage = { role: 'user', content: followUpText };
+    const updatedHistory = [...chatHistory, newMsg];
+    setChatHistory(updatedHistory);
+    setFollowUpText('');
+    setIsFollowUpLoading(true);
+    try {
+      const res = await sendChatMessage({
+        symptoms: aiResult.symptoms,
+        diagnosis: aiResult.diagnosis,
+        advice: aiResult.advice,
+        conversation_history: chatHistory,
+        new_message: followUpText,
+      });
+      setChatHistory([...updatedHistory, { role: 'assistant', content: res.reply }]);
+    } catch (err: any) {
+      setChatHistory([...updatedHistory, { role: 'assistant', content: '抱歉，暂时无法回复。请稍后重试。' }]);
+      showToast(err?.response?.data?.detail ?? '追问发送失败', 'error');
+    } finally {
+      setIsFollowUpLoading(false);
+    }
+  };
+
+  const handleNewSession = () => {
+    setAiResult(null);
+    setChatHistory([]);
+    setSymptomText('');
+    setUploadedImage(null);
+    setImageName('');
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chatHistory, isFollowUpLoading]);
 
   const getHerbNameAndImg = (id: string) => {
     const h = MOCK_HERBS.find(item => item.id === id);
@@ -231,35 +279,60 @@ export const Home: React.FC = () => {
                 <button type="submit" disabled={isAnalyzing || !symptomText.trim()}
                   className="flex-1 flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-[#466805] hover:bg-[#466805]/90 disabled:bg-neutral-200 disabled:text-neutral-400 text-white text-sm font-bold transition-all">
                   {isAnalyzing ? (
-                    <><Sparkles className="w-4 h-4 animate-spin" />AI 辨证分析中...</>
+                    <span className="flex items-center gap-2"><Sparkles className="w-4 h-4 animate-spin" />AI 辨证分析中...</span>
                   ) : (
-                    <><Send className="w-4 h-4" />提交症状分析</>
+                    <span className="flex items-center gap-2"><Send className="w-4 h-4" />提交症状分析</span>
                   )}
                 </button>
               </div>
             </form>
 
-            {/* AI Result */}
+            {/* Chat View — shown after initial diagnosis */}
             <AnimatePresence>
               {aiResult && (
-                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                  className="border border-[#7ba23f]/20 bg-[#7ba23f]/5 rounded-2xl p-5 space-y-4">
-                  <div>
-                    <p className="text-xs font-bold text-[#7ba23f] uppercase tracking-wider mb-1">AI 辨证结果</p>
-                    <h3 className="text-base font-black text-[#1b1c1c]">{aiResult.title}</h3>
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                  className="border border-[#7ba23f]/20 bg-white rounded-2xl overflow-hidden shadow-xs">
+
+                  <div className="flex items-center justify-between px-5 py-3 bg-[#7ba23f]/5 border-b border-[#7ba23f]/10">
+                    <div className="flex items-center gap-2">
+                      <MessageCircle className="w-4 h-4 text-[#7ba23f]" />
+                      <span className="text-xs font-bold text-[#466805]">AI 中医问诊对话</span>
+                    </div>
+                    <button onClick={handleNewSession}
+                      className="text-xs font-bold text-[#747968] hover:text-[#466805] transition-all cursor-pointer">
+                      + 新建问诊
+                    </button>
                   </div>
-                  <div>
-                    <p className="text-xs font-bold text-[#466805] mb-1">病机分析</p>
-                    <p className="text-sm text-[#44493a] leading-relaxed whitespace-pre-wrap">{aiResult.diagnosis}</p>
+
+                  <div className="max-h-[420px] overflow-y-auto p-4 space-y-3">
+                    {chatHistory.map((msg, i) => (
+                      <div key={i} className={'flex ' + (msg.role === 'user' ? 'justify-end' : 'justify-start')}>
+                        <div className={'max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ' + (
+                          msg.role === 'user'
+                            ? 'bg-[#466805] text-white rounded-br-md'
+                            : 'bg-[#efeded] text-[#1b1c1c] rounded-bl-md'
+                        )}>
+                          <div className="whitespace-pre-wrap">{msg.content}</div>
+                        </div>
+                      </div>
+                    ))}
+                    {isFollowUpLoading && (
+                      <div className="flex justify-start">
+                        <div className="bg-[#efeded] rounded-2xl rounded-bl-md px-4 py-3">
+                          <div className="flex items-center gap-1.5">
+                            <Sparkles className="w-3.5 h-3.5 text-[#7ba23f] animate-spin" />
+                            <span className="text-xs text-[#747968] font-medium">辨证思考中...</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    <div ref={chatEndRef} />
                   </div>
-                  <div>
-                    <p className="text-xs font-bold text-[#466805] mb-1">养生建议</p>
-                    <p className="text-sm text-[#44493a] leading-relaxed whitespace-pre-wrap">{aiResult.advice}</p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3 pt-2">
+
+                  <div className="grid grid-cols-2 gap-3 px-5 pb-3">
                     {(() => { const h = getHerbNameAndImg(aiResult.herbId); return (
                       <div onClick={() => navigateTo('herb-detail', 'herbs', { id: aiResult.herbId })}
-                        className="flex items-center gap-3 p-3 bg-white rounded-xl border border-black/5 cursor-pointer hover:border-[#7ba23f]/30 transition-all">
+                        className="flex items-center gap-3 p-3 bg-[#7ba23f]/5 rounded-xl border border-[#7ba23f]/10 cursor-pointer hover:border-[#7ba23f]/30 transition-all">
                         {h.img && <img src={h.img} alt={h.name} className="w-10 h-10 rounded-lg object-cover" />}
                         <div>
                           <p className="text-[10px] text-[#747968] font-semibold">推荐草药</p>
@@ -269,7 +342,7 @@ export const Home: React.FC = () => {
                     );})()}
                     {(() => { const r = getRecipeNameAndImg(aiResult.recipeId); return (
                       <div onClick={() => navigateTo('recipe-detail', 'recipes', { id: aiResult.recipeId })}
-                        className="flex items-center gap-3 p-3 bg-white rounded-xl border border-black/5 cursor-pointer hover:border-[#7ba23f]/30 transition-all">
+                        className="flex items-center gap-3 p-3 bg-[#7ba23f]/5 rounded-xl border border-[#7ba23f]/10 cursor-pointer hover:border-[#7ba23f]/30 transition-all">
                         {r.img && <img src={r.img} alt={r.name} className="w-10 h-10 rounded-lg object-cover" />}
                         <div>
                           <p className="text-[10px] text-[#747968] font-semibold">推荐食谱</p>
@@ -278,6 +351,24 @@ export const Home: React.FC = () => {
                       </div>
                     );})()}
                   </div>
+
+                  <form onSubmit={handleFollowUp} className="flex items-center gap-2 px-4 py-3 border-t border-[#7ba23f]/10 bg-[#7ba23f]/3">
+                    <input
+                      type="text"
+                      value={followUpText}
+                      onChange={(e) => setFollowUpText(e.target.value)}
+                      placeholder="追问：比如适合吃什么、能跑步吗、为什么会这样..."
+                      className="flex-1 bg-white border border-transparent focus:border-[#7ba23f]/30 rounded-xl px-4 py-2 text-sm font-medium outline-none text-[#1b1c1c] placeholder:text-neutral-400 transition-all"
+                    />
+                    <button type="submit" disabled={isFollowUpLoading || !followUpText.trim()}
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#466805] hover:bg-[#466805]/90 disabled:bg-neutral-200 disabled:text-neutral-400 text-white text-sm font-bold transition-all cursor-pointer">
+                      {isFollowUpLoading ? (
+                        <Sparkles className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <ArrowRight className="w-4 h-4" />
+                      )}
+                    </button>
+                  </form>
                 </motion.div>
               )}
             </AnimatePresence>

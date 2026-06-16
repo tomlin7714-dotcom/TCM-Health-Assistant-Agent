@@ -148,6 +148,25 @@ class DiagnoseResult(BaseModel):
     constitution: Optional[str] = None
 
 
+# ── Chat (multi-turn conversation) ────────────────────────────────────────────
+
+class ChatMessage(BaseModel):
+    role: str  # "user" | "assistant"
+    content: str
+
+
+class ChatRequest(BaseModel):
+    symptoms: str
+    diagnosis: str
+    advice: str
+    conversation_history: List[ChatMessage] = []
+    new_message: str
+
+
+class ChatResponse(BaseModel):
+    reply: str
+
+
 # ── Constitution ──────────────────────────────────────────────────────────────
 
 class ConstitutionAnswer(BaseModel):

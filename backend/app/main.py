@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.db.database import init_db
-from app.api.routes import auth, history, favorites, reminders, feedback, diagnose, constitution
+from app.api.routes import auth, history, favorites, reminders, feedback, diagnose, constitution, chat
 from app.api.routes.content import herbs_router, recipes_router, workouts_router
 
 
@@ -41,6 +41,7 @@ app.include_router(constitution.router, prefix=API_PREFIX)
 app.include_router(herbs_router,        prefix=API_PREFIX)
 app.include_router(recipes_router,      prefix=API_PREFIX)
 app.include_router(workouts_router,     prefix=API_PREFIX)
+app.include_router(chat.router,         prefix=API_PREFIX)
 
 
 @app.get("/")
