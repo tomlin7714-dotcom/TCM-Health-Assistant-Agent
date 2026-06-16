@@ -36,6 +36,12 @@ export const getMe = (): Promise<UserOut> =>
 export const updateMe = (data: Partial<Pick<UserOut, 'name' | 'avatar' | 'constitution'>>): Promise<UserOut> =>
   api.put('/auth/me', data).then((r) => r.data)
 
+export const uploadAvatar = (file: File): Promise<{ avatar_url: string }> => {
+  const form = new FormData()
+  form.append('file', file)
+  return api.post('/auth/avatar', form, { headers: { 'Content-Type': 'multipart/form-data' } }).then((r) => r.data)
+}
+
 
 // ── Herbs ─────────────────────────────────────────────────────────────────────
 

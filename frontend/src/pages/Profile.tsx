@@ -3,8 +3,8 @@
  */
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { Award, User, Bell, ClipboardList, MessageSquare, Clock, Shield, Info, LogOut, ChevronRight, Camera, Check, X, Pencil } from 'lucide-react';
-import { updateMe } from '../api/services';
+import { Award, User, Bell, ClipboardList, MessageSquare, Clock, Shield, Info, LogOut, ChevronRight, Camera, Check, X, Pencil, Upload } from 'lucide-react';
+import { updateMe, uploadAvatar } from '../api/services';
 
 export const Profile: React.FC = () => {
   const { user, updateUser, favorites, history, navigateTo, logout, showToast } = useApp();
@@ -14,6 +14,8 @@ export const Profile: React.FC = () => {
   const [editingAvatar, setEditingAvatar] = useState(false);
   const [editAvatar, setEditAvatar] = useState(user.avatar);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const totalFavorites = favorites.herbs.length + favorites.recipes.length + favorites.workouts.length;
 
@@ -33,6 +35,27 @@ export const Profile: React.FC = () => {
     } finally {
       setSaving(false);
       setEditingName(false);
+    }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      showToast('图片不能超过 2MB', 'error');
+      return;
+    }
+    setUploading(true);
+    try {
+      const res = await uploadAvatar(file);
+      const fullUrl = res.avatar_url.startsWith('http') ? res.avatar_url : window.location.origin + res.avatar_url;
+      updateUser({ avatar: fullUrl });
+      setEditAvatar(fullUrl);
+      showToast('头像上传成功！', 'success');
+    } catch {
+      showToast('上传失败，请重试', 'error');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -129,6 +152,21 @@ export const Profile: React.FC = () => {
                 onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'; }}
               />
             </div>
+
+            {/* File upload button */}
+            <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept="image/*" className="hidden" />
+            <button onClick={() => fileInputRef.current?.click()} disabled={uploading}
+              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#7ba23f]/10 hover:bg-[#7ba23f]/20 text-[#466805] text-xs font-bold transition-all cursor-pointer">
+              <Upload className="w-3.5 h-3.5" />
+              {uploading ? '上传中...' : '从本地上传图片'}
+            </button>
+
+            <div className="flex items-center gap-2">
+              <div className="flex-1 h-px bg-[#efeded]" />
+              <span className="text-[10px] text-[#747968] font-medium">或粘贴链接</span>
+              <div className="flex-1 h-px bg-[#efeded]" />
+            </div>
+
             <div>
               <label className="block text-xs font-bold text-[#44493a] mb-1.5">头像图片链接</label>
               <input

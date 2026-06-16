@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.core.config import settings
 from app.db.database import init_db
@@ -47,6 +48,14 @@ app.include_router(chat.router,         prefix=API_PREFIX)
 @app.get("/")
 async def root():
     return {"message": "智慧中医健康助手 API 运行正常", "docs": "/docs"}
+
+
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
 
 
 @app.get("/health")

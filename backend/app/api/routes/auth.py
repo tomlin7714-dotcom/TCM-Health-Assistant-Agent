@@ -1,4 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+import os
+import uuid
+from pathlib import Path
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.database import get_db
@@ -74,3 +77,29 @@ async def update_me(
 ):
     updated = await update_user(db, current_user, data)
     return UserOut.model_validate(updated)
+
+
+UPLOAD_DIR = Path("uploads/avatars")
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+
+@router.post("/avatar")
+async def upload_avatar(
+    file: UploadFile = File(...),
+    current_user=Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    if file.content_type not in ("image/jpeg", "image/png", "image/webp", "image/gif"):
+        raise HTTPException(status_code=400, detail="仅支持 JPG / PNG / WebP / GIF 格式")
+    content = await file.read()
+    if len(content) > 2 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="图片大小不能超过 2MB")
+
+    ext = os.path.splitext(file.filename or "avatar.jpg")[1] or ".jpg"
+    filename = f"{uuid.uuid4().hex}{ext}"
+    filepath = UPLOAD_DIR / filename
+    filepath.write_bytes(content)
+
+    avatar_url = f"/uploads/avatars/{filename}"
+    await update_user(db, current_user, UserUpdate(avatar=avatar_url))
+    return {"avatar_url": avatar_url}
