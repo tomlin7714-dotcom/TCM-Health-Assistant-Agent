@@ -378,13 +378,22 @@ export const Home: React.FC = () => {
         {/* Right sidebar */}
         <div className="space-y-6">
           <div className="bg-white border border-black/5 rounded-2xl p-5 space-y-4">
-            <h3 className="text-sm font-black text-[#1b1c1c]">近期诊断记录</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-black text-[#1b1c1c]">近期诊断记录</h3>
+              {history.length > 0 && (
+                <button onClick={() => navigateTo('history', 'profile')}
+                  className="text-[10px] font-bold text-[#7ba23f] hover:text-[#466805] transition-all cursor-pointer">
+                  查看全部 &rarr;
+                </button>
+              )}
+            </div>
             {history.length === 0 ? (
               <p className="text-xs text-[#747968] font-medium">暂无记录，完成首次 AI 辨证后将在此显示。</p>
             ) : (
               <div className="space-y-3">
                 {history.slice(0, 3).map((item, i) => (
-                  <div key={i} className="p-3 rounded-xl bg-[#efeded]/60 space-y-1">
+                  <div key={i} onClick={() => navigateTo('history', 'profile')}
+                    className="p-3 rounded-xl bg-[#efeded]/60 space-y-1 cursor-pointer hover:bg-[#efeded] hover:shadow-sm transition-all">
                     <p className="text-xs font-bold text-[#1b1c1c] line-clamp-1">{item.title}</p>
                     <p className="text-xs text-[#747968] line-clamp-2">{item.symptoms}</p>
                   </div>
