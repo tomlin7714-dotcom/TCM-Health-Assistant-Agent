@@ -59,11 +59,16 @@ npm run dev
   ▼
 FastAPI 后端
   ├── Auth (JWT 注册/登录/自动登录)
-  ├── LangGraph Agent (症状解析 → 图片分析 → 辨证 → 推荐)
+  ├── ReAct Agent (Think→Act→Observe 循环 + 5 Tools)
+  │    ├── search_herbs     → 药材数据库
+  │    ├── search_recipes   → 食谱数据库
+  │    ├── search_workouts  → 功法数据库
+  │    ├── assess_constitution → 体质判断
+  │    └── remember_user_context → 用户记忆
   ├── REST API (CRUD + 多轮聊天)
   ├── StaticFiles (头像/药材图)
   │
-  ├── DeepSeek V3 API ← 文本辨证
+  ├── DeepSeek V3 API ← 文本推理 + Tool Calling
   ├── 智谱 GLM-4V API ← 舌苔图片望诊
   └── SQLite ← 用户/咨询记录
 ```
@@ -162,7 +167,7 @@ balance智慧中医/
 |------|:----:|------|
 | 前端 9 个页面 | ✅ | Home / Login / History / Profile / TongueScan / Herbs / HerbDetail / Recipes / Workouts |
 | 后端 10 组 API | ✅ | auth / diagnose / chat / history / favorites / reminders / feedback / herbs / recipes / workouts |
-| LangGraph Agent 工作流 | ✅ | 4 节点：症状解析→图片望诊→辨证推理→推荐生成 |
+| LangGraph ReAct Agent | ✅ | Tool-Use 自主决策：5 个 Tool + Think→Act→Observe 循环 |
 | 多轮对话追问 | ✅ | 携带辨证上下文，支持追问饮食/运动/病理 |
 | 图片舌诊分析 | ✅ | 智谱 GLM-4V-Flash，输出舌色/苔色/舌形/寒热虚实 |
 | 用户注册登录 | ✅ | 用户名+密码注册，JWT 自动登录，多用户数据隔离 |
