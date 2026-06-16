@@ -66,26 +66,37 @@ async def _run_agent(symptoms: str, image_base64: str | None) -> DiagnoseResult:
             "user_context": None,
         })
 
-        # Extract final AI response
+        # Extract final AI response (last AI message without tool_calls)
+        from langchain_core.messages import AIMessage
         final_content = ""
-        tool_calls_made = []
-        for msg in state["messages"]:
-            if hasattr(msg, "tool_calls") and msg.tool_calls:
-                tool_calls_made.extend(tc["name"] for tc in msg.tool_calls)
-            if isinstance(msg, type(state["messages"][-1])) and hasattr(msg, "content") and msg.content and not hasattr(msg, "tool_calls"):
+        for msg in reversed(state["messages"]):
+            if isinstance(msg, AIMessage) and not (hasattr(msg, "tool_calls") and msg.tool_calls):
                 final_content = msg.content
+                break
 
         if not final_content:
-            final_content = str(state["messages"][-1].content) if hasattr(state["messages"][-1], "content") else "辨证分析完成，请查看结果。"
+            # Fallback: last message content
+            last = state["messages"][-1]
+            final_content = str(last.content) if hasattr(last, "content") else "辨证分析完成。"
 
-        # Parse title from content (first line or extract)
-        lines = [l.strip() for l in final_content.split("\n") if l.strip()]
-        title = lines[0].lstrip("#").strip()[:30] if lines else "AI 中医辨证分析"
+        # Parse title — prefer "辨证名称：XXX" pattern, fallback to first meaningful line
+        title = "AI 中医辨证分析"
+        for line in final_content.split("\n"):
+            s = line.strip()
+            if "辨证名称" in s:
+                title = s.split("：", 1)[-1].split(":")[-1].strip()[:30]
+                break
+        if title == "AI 中医辨证分析":
+            for line in final_content.split("\n"):
+                s = line.strip()
+                if s and not s.startswith("---") and not s.startswith("好的") and not s.startswith("##") and len(s) > 3:
+                    title = s.lstrip("#").strip()[:30]
+                    break
 
         return DiagnoseResult(
             title=title,
             diagnosis=final_content,
-            advice=final_content,  # Unified response
+            advice=final_content,
             constitution="待测",
         )
     except Exception as e:
