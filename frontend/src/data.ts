@@ -591,6 +591,271 @@ export const MOCK_RECIPES: RecipeItem[] = [
       '睡前1小时温服，安神助眠效果最佳。'
     ],
     image: HERB_IMAGES.r8
+  },
+  {
+    id: 'r9',
+    name: '百合雪梨润肺汤',
+    benefits: ['润肺止咳', '清热生津', '滋阴润燥'],
+    time: '40分钟',
+    difficulty: '入门',
+    intro: '百合润肺止咳清心安神，雪梨清热生津润燥化痰，两者相合为秋季润肺佳品，适合干咳少痰、咽干喉痛、皮肤干燥者四季调养。',
+    ingredients: [
+      { name: '百合（干）', quantity: '20克', icon: 'Heart' },
+      { name: '雪梨', quantity: '2个', icon: 'Droplet' },
+      { name: '冰糖', quantity: '适量', icon: 'Flame' },
+      { name: '枸杞子', quantity: '5克', icon: 'Eye' }
+    ],
+    steps: [
+      '百合提前用温水泡发30分钟，雪梨去皮去核切块。',
+      '将百合、雪梨块放入砂锅，加清水约1000毫升。',
+      '大火煮沸后转小火炖30分钟，至雪梨透明软烂。',
+      '加入冰糖和枸杞子，再煮5分钟至冰糖溶化。',
+      '温热食用，汤料同食，润肺效果更佳。'
+    ],
+    image: HERB_IMAGES.r9
+  },
+  {
+    id: 'r10',
+    name: '薏米赤小豆祛湿粥',
+    benefits: ['利水祛湿', '健脾消肿', '清热排毒'],
+    time: '60分钟',
+    difficulty: '入门',
+    intro: '薏米健脾利水渗湿，赤小豆利水消肿解毒，为经典的祛湿组合。适合湿气重、身体浮肿、舌苔厚腻、大便粘滞的人群。',
+    ingredients: [
+      { name: '薏米', quantity: '50克', icon: 'Sun' },
+      { name: '赤小豆', quantity: '50克', icon: 'Award' },
+      { name: '茯苓', quantity: '15克', icon: 'Compass' },
+      { name: '冰糖', quantity: '适量', icon: 'Flame' }
+    ],
+    steps: [
+      '薏米和赤小豆提前用冷水浸泡4小时以上。',
+      '茯苓用清水冲洗干净。',
+      '将所有材料放入砂锅，加清水约1500毫升。',
+      '大火煮沸后撇去浮沫，转小火慢熬50分钟。',
+      '粥成粘稠，加冰糖调味，温热食用。'
+    ],
+    image: HERB_IMAGES.r10
+  },
+  {
+    id: 'r11',
+    name: '党参黄芪补气鸡汤',
+    benefits: ['补气养血', '健脾益肺', '增强免疫'],
+    time: '120分钟',
+    difficulty: '中级',
+    intro: '党参补中益气健脾，黄芪补气升阳固表，搭配鸡肉炖汤，气血双补，适合气虚乏力、易感冒、面色苍白、语音低微的人群。',
+    ingredients: [
+      { name: '党参', quantity: '15克', icon: 'Leaf' },
+      { name: '黄芪', quantity: '15克', icon: 'Shield' },
+      { name: '土鸡（切块）', quantity: '半只', icon: 'Award' },
+      { name: '红枣（去核）', quantity: '6枚', icon: 'Heart' },
+      { name: '生姜', quantity: '3片', icon: 'Sun' }
+    ],
+    steps: [
+      '鸡肉冷水下锅焯水去血沫，捞出洗净。',
+      '党参、黄芪用清水浸泡15分钟。',
+      '将所有材料放入砂锅，加清水约2000毫升。',
+      '大火煮沸后撇去浮沫，转小火慢炖100分钟。',
+      '出锅前加少许盐调味，汤肉同食。'
+    ],
+    image: HERB_IMAGES.r11
+  },
+  {
+    id: 'r12',
+    name: '菊花决明子降压茶',
+    benefits: ['清肝明目', '降压降脂', '润肠通便'],
+    time: '10分钟',
+    difficulty: '入门',
+    intro: '菊花清肝明目散风热，决明子清热明目润肠通便，两味共用为高血压、高血脂人群的理想代茶饮，也适合长期用眼过度者。',
+    ingredients: [
+      { name: '杭白菊', quantity: '6朵', icon: 'Eye' },
+      { name: '决明子（炒）', quantity: '10克', icon: 'Shield' },
+      { name: '枸杞子', quantity: '5克', icon: 'Heart' },
+      { name: '沸水', quantity: '400毫升', icon: 'Zap' }
+    ],
+    steps: [
+      '决明子提前用小火炒至微香（或直接购买炒决明子）。',
+      '将决明子、菊花、枸杞子放入杯中。',
+      '倒入沸水约400毫升，盖上盖子闷泡10分钟。',
+      '茶汤呈淡金黄色时即可饮用，可反复冲泡2-3次。'
+    ],
+    image: HERB_IMAGES.r12
+  },
+  {
+    id: 'r13',
+    name: '核桃黑芝麻补肾糊',
+    benefits: ['补肾固精', '乌发养颜', '润肠通便'],
+    time: '20分钟',
+    difficulty: '入门',
+    intro: '核桃补肾温阳健脑，黑芝麻补肝肾益精血乌须发，两者研磨成糊温润香浓，适合肾虚腰痛、须发早白、记忆力减退者。',
+    ingredients: [
+      { name: '核桃仁', quantity: '30克', icon: 'Award' },
+      { name: '黑芝麻', quantity: '30克', icon: 'Sun' },
+      { name: '糯米', quantity: '20克', icon: 'Leaf' },
+      { name: '红糖', quantity: '适量', icon: 'Flame' }
+    ],
+    steps: [
+      '黑芝麻提前用小火炒香，核桃仁掰成小块。',
+      '糯米提前用清水浸泡2小时。',
+      '将所有材料放入豆浆机或破壁机，加水约600毫升。',
+      '选择米糊模式打成糊状，倒入碗中加红糖调味。',
+      '温热食用，早晚各一小碗，坚持效果更佳。'
+    ],
+    image: HERB_IMAGES.r13
+  },
+  {
+    id: 'r14',
+    name: '酸枣仁茯苓安神粥',
+    benefits: ['养心安神', '改善睡眠', '健脾祛湿'],
+    time: '50分钟',
+    difficulty: '入门',
+    intro: '酸枣仁养心补肝宁心安神，茯苓健脾利水宁心，搭配粳米煮粥，专为失眠多梦、心烦不安、入睡困难者设计，睡前2小时食用效果最佳。',
+    ingredients: [
+      { name: '酸枣仁（炒）', quantity: '15克', icon: 'Heart' },
+      { name: '茯苓', quantity: '15克', icon: 'Compass' },
+      { name: '粳米', quantity: '50克', icon: 'Sun' },
+      { name: '桂圆肉', quantity: '10克', icon: 'Eye' }
+    ],
+    steps: [
+      '酸枣仁捣碎用纱布包好，茯苓研成细末。',
+      '粳米淘洗干净，与酸枣仁包一同放入砂锅。',
+      '加清水约1000毫升，大火煮沸后转小火熬30分钟。',
+      '取出酸枣仁包，加入茯苓粉和桂圆肉搅匀。',
+      '再煮10分钟至粥浓稠，睡前2小时温热食用。'
+    ],
+    image: HERB_IMAGES.r14
+  },
+  {
+    id: 'r15',
+    name: '桑葚枸杞滋阴膏',
+    benefits: ['滋阴补血', '养肝明目', '润肠通便'],
+    time: '90分钟',
+    difficulty: '中级',
+    intro: '桑葚滋阴补血生津润燥，枸杞滋补肝肾益精明目，慢火熬制成膏方便日常取食，适合阴虚血亏、面色萎黄、眼干目涩、须发早白者。',
+    ingredients: [
+      { name: '桑葚（干）', quantity: '100克', icon: 'Droplet' },
+      { name: '枸杞子', quantity: '50克', icon: 'Eye' },
+      { name: '红枣（去核）', quantity: '50克', icon: 'Heart' },
+      { name: '蜂蜜', quantity: '100克', icon: 'Flame' }
+    ],
+    steps: [
+      '桑葚干用清水浸泡1小时，枸杞和红枣洗净。',
+      '将所有材料（除蜂蜜外）放入锅中，加水约800毫升。',
+      '大火煮沸后转小火慢熬60分钟，期间不断搅拌防粘锅。',
+      '熬至浓稠膏状时关火，稍凉后拌入蜂蜜搅匀。',
+      '装入干净玻璃瓶冷藏，每日早晚各取一勺，温水冲服。'
+    ],
+    image: HERB_IMAGES.r15
+  },
+  {
+    id: 'r16',
+    name: '陈皮生姜暖胃饮',
+    benefits: ['理气暖胃', '温中散寒', '化湿止呕'],
+    time: '10分钟',
+    difficulty: '入门',
+    intro: '陈皮理气健脾燥湿，生姜温中散寒止呕，红糖暖胃驱寒，三味简方适合脾胃虚寒、胃脘冷痛、食后腹胀、恶心欲呕者日常饮用。',
+    ingredients: [
+      { name: '陈皮', quantity: '5克', icon: 'Leaf' },
+      { name: '生姜', quantity: '5片', icon: 'Sun' },
+      { name: '红糖', quantity: '15克', icon: 'Flame' },
+      { name: '沸水', quantity: '300毫升', icon: 'Zap' }
+    ],
+    steps: [
+      '陈皮用清水快速冲洗，生姜洗净切片。',
+      '将陈皮和姜片放入杯中。',
+      '倒入沸水约300毫升，盖上盖子闷泡10分钟。',
+      '加入红糖搅拌至溶化，温热饮用。',
+      '饭前饮用暖胃开胃，饭后饮用助消化。'
+    ],
+    image: HERB_IMAGES.r16
+  },
+  {
+    id: 'r17',
+    name: '莲子芡实健脾羹',
+    benefits: ['健脾固肾', '养心安神', '补中益气'],
+    time: '50分钟',
+    difficulty: '入门',
+    intro: '莲子补脾止泻益肾固精养心安神，芡实益肾固精补脾止泻，两者均属性平甘涩之品，合用为脾肾双补佳品，适合脾虚泄泻、遗精尿频、带下量多者。',
+    ingredients: [
+      { name: '莲子（去心）', quantity: '30克', icon: 'Heart' },
+      { name: '芡实', quantity: '30克', icon: 'Shield' },
+      { name: '山药', quantity: '20克', icon: 'Leaf' },
+      { name: '冰糖', quantity: '适量', icon: 'Flame' }
+    ],
+    steps: [
+      '莲子、芡实提前用清水浸泡2小时。',
+      '山药去皮切小块（戴手套防过敏）。',
+      '将所有材料放入炖盅，加水约800毫升。',
+      '隔水炖或小火煮45分钟，至莲子粉糯、芡实软烂。',
+      '加入冰糖搅匀，温热食用。'
+    ],
+    image: HERB_IMAGES.r17
+  },
+  {
+    id: 'r18',
+    name: '玫瑰花佛手疏肝茶',
+    benefits: ['疏肝解郁', '理气和胃', '调经止痛'],
+    time: '10分钟',
+    difficulty: '入门',
+    intro: '玫瑰花疏肝解郁活血调经，佛手理气和胃燥湿化痰，两者相合为情绪调理佳饮，适合压力大、情绪抑郁、经前乳胀、胸闷胁痛者。',
+    ingredients: [
+      { name: '玫瑰花（干）', quantity: '6朵', icon: 'Heart' },
+      { name: '佛手（干）', quantity: '5克', icon: 'Leaf' },
+      { name: '枸杞子', quantity: '5克', icon: 'Eye' },
+      { name: '蜂蜜', quantity: '适量', icon: 'Flame' }
+    ],
+    steps: [
+      '玫瑰花和佛手用清水快速冲洗一遍。',
+      '将所有材料放入玻璃杯中。',
+      '倒入沸水约350毫升，盖上盖子闷泡8分钟。',
+      '稍凉后加入蜂蜜调味，不宜用沸水冲蜂蜜。',
+      '适合工作间隙或睡前放松时饮用。'
+    ],
+    image: HERB_IMAGES.r18
+  },
+  {
+    id: 'r19',
+    name: '冬瓜薏仁消肿汤',
+    benefits: ['清热利水', '消肿减肥', '健脾祛湿'],
+    time: '45分钟',
+    difficulty: '入门',
+    intro: '冬瓜清热利水消肿，薏仁健脾利水渗湿，两者均为利水消肿常用之品，低热量高纤维，适合水肿型肥胖、夏季暑湿、小便不利者。',
+    ingredients: [
+      { name: '冬瓜（带皮）', quantity: '300克', icon: 'Droplet' },
+      { name: '薏仁', quantity: '40克', icon: 'Sun' },
+      { name: '生姜', quantity: '3片', icon: 'Flame' },
+      { name: '盐', quantity: '少许', icon: 'Compass' }
+    ],
+    steps: [
+      '薏仁提前用清水浸泡3小时。',
+      '冬瓜连皮洗净切大块（带皮利水效果更好）。',
+      '将薏仁、冬瓜、姜片放入砂锅，加清水约1500毫升。',
+      '大火煮沸后转小火炖40分钟，至冬瓜透明、薏仁软烂。',
+      '加少许盐调味即可，汤料同食，清淡鲜美。'
+    ],
+    image: HERB_IMAGES.r19
+  },
+  {
+    id: 'r20',
+    name: '黄精首乌养发粥',
+    benefits: ['益精填髓', '乌发养颜', '补肝益肾'],
+    time: '60分钟',
+    difficulty: '中级',
+    intro: '黄精补气养阴健脾润肺益肾，何首乌补肝肾益精血乌须发，搭配黑米黑豆共奏乌发养颜之功，适合肝肾不足、须发早白、腰膝酸软者。',
+    ingredients: [
+      { name: '黄精', quantity: '15克', icon: 'Leaf' },
+      { name: '制何首乌', quantity: '10克', icon: 'Award' },
+      { name: '黑米', quantity: '50克', icon: 'Sun' },
+      { name: '黑豆', quantity: '30克', icon: 'Shield' },
+      { name: '核桃仁', quantity: '15克', icon: 'Heart' }
+    ],
+    steps: [
+      '黑米和黑豆提前用冷水浸泡4小时以上。',
+      '黄精、制何首乌用清水浸泡20分钟。',
+      '将所有材料放入砂锅，加清水约1200毫升。',
+      '大火煮沸后撇去浮沫，转小火慢熬50分钟。',
+      '待粥体浓稠、豆米软烂，撒入核桃仁搅匀，温热食用。'
+    ],
+    image: HERB_IMAGES.r20
   }
 ];
 
