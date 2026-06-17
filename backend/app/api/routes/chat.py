@@ -29,7 +29,7 @@ async def chat(
 
     # Build conversation history for the agent
     messages = [
-        SystemMessage(content=f"【患者原始症状】{data.symptoms}\n\n【已有辨证】{data.diagnosis}\n\n患者正在追问具体问题，请调用相关工具辅助回答，给出实用的指导。"),
+        SystemMessage(content=f"用户之前说的是：{data.symptoms}\n之前你给出的分析是：{data.diagnosis}\n现在用户接着追问了，请保持温暖贴心的风格，自然地引用小工具来帮忙回答~"),
     ]
 
     for msg in data.conversation_history[-12:]:
