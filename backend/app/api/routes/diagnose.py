@@ -34,6 +34,40 @@ async def diagnose_test():
         return {"status": "error", "detail": str(e), "trace": traceback.format_exc()}
 
 
+def _match_content_to_herb_recipe(content: str) -> tuple:
+    """根据诊断内容中的关键词匹配推荐的药材和食谱。"""
+    d = content
+    # 阳虚/寒证 → 干姜、当归生姜羊肉汤/红枣姜糖茶
+    if any(k in d for k in ["阳虚", "寒", "怕冷", "手脚冰", "畏寒", "肢冷"]):
+        return "h5", "r5", "阳虚质"
+    # 气虚 → 黄芪、党参黄芪补气鸡汤
+    if any(k in d for k in ["气虚", "乏力", "疲倦", "懒言", "气短"]):
+        return "h3", "r11", "气虚质"
+    # 阴虚/失眠 → 枸杞子、银耳莲子羹/桂圆红枣安神茶
+    if any(k in d for k in ["阴虚", "失眠", "多梦", "眼干", "盗汗", "心烦"]):
+        return "h2", "r6", "阴虚质"
+    # 血虚 → 当归、四神汤
+    if any(k in d for k in ["血虚", "面色萎黄", "月经量少", "头晕", "心悸"]):
+        return "h7", "r4", "血虚质"
+    # 湿气/痰湿 → 茯苓、薏米赤小豆祛湿粥
+    if any(k in d for k in ["湿热", "痰湿", "湿气", "浮肿", "舌苔厚腻", "大便黏"]):
+        return "h10", "r10", "痰湿质"
+    # 气郁 → 菊花、玫瑰花佛手疏肝茶
+    if any(k in d for k in ["气郁", "抑郁", "烦躁", "胁胀", "胸闷", "情绪"]):
+        return "h4", "r18", "气郁质"
+    # 脾胃 → 白术、山楂陈皮消食茶/黑米红豆健脾粥
+    if any(k in d for k in ["脾胃", "胃胀", "消化不良", "食欲", "腹胀"]):
+        return "h9", "r7", "气虚质"
+    # 咽喉/肺/咳嗽 → 金银花、百合雪梨润肺汤
+    if any(k in d for k in ["咳嗽", "咽", "喉", "肺", "感冒", "发热"]):
+        return "h15", "r9", "平和质"
+    # 血瘀 → 丹参、当归生姜羊肉汤
+    if any(k in d for k in ["血瘀", "刺痛", "瘀", "斑", "痛经"]):
+        return "h14", "r5", "血瘀质"
+    # 默认
+    return "h1", "r8", "平和质"
+
+
 async def _run_agent(symptoms: str, image_base64: str | None) -> DiagnoseResult:
     """Run the ReAct agent. If image provided, pre-analyze it and add to context."""
     from langchain_core.messages import HumanMessage
@@ -93,11 +127,16 @@ async def _run_agent(symptoms: str, image_base64: str | None) -> DiagnoseResult:
                     title = s.lstrip("#").strip()[:30]
                     break
 
+        # Match herb & recipe from content
+        herb_id, recipe_id, constitution = _match_content_to_herb_recipe(final_content)
+
         return DiagnoseResult(
             title=title,
             diagnosis=final_content,
             advice=final_content,
-            constitution="待测",
+            herb_id=herb_id,
+            recipe_id=recipe_id,
+            constitution=constitution,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Agent error: {str(e)}\n{traceback.format_exc()}")
