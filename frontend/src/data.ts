@@ -478,6 +478,119 @@ export const MOCK_RECIPES: RecipeItem[] = [
       '待粥体粘稠，红豆煮至酥软爆花，关火闷5分钟，温热食用，大健脾阳。'
     ],
     image: 'https://images.unsplash.com/photo-1536304997881-a372c179924b?auto=format&fit=crop&w=600&q=80'
+  },
+  {
+    id: 'r4',
+    name: '四神汤',
+    benefits: ['健脾祛湿', '养胃安神', '补中益气'],
+    time: '60分钟',
+    difficulty: '入门',
+    intro: '中医经典健脾名方，由茯苓、山药、莲子、芡实四味组成，均属性平之品，适合脾胃虚弱、湿气偏重、食欲不振、大便溏软的人群四季调理。',
+    ingredients: [
+      { name: '茯苓', quantity: '15克', icon: 'Compass' },
+      { name: '山药', quantity: '15克', icon: 'Leaf' },
+      { name: '莲子（去心）', quantity: '15克', icon: 'Heart' },
+      { name: '芡实', quantity: '15克', icon: 'Shield' },
+      { name: '猪肚或排骨', quantity: '200克', icon: 'Award' }
+    ],
+    steps: [
+      '将茯苓、山药、莲子、芡实提前用清水浸泡30分钟。',
+      '猪肚洗净切块焯水去腥（或排骨焯水），捞出备用。',
+      '将所有材料放入砂锅，加入清水约1500毫升。',
+      '大火煮沸后撇去浮沫，转小火慢炖50分钟。',
+      '出锅前加少许盐调味即可，汤料同食，健脾效果更佳。'
+    ],
+    image: HERB_IMAGES.r4
+  },
+  {
+    id: 'r5',
+    name: '当归生姜羊肉汤',
+    benefits: ['温经散寒', '补血活血', '暖身驱寒'],
+    time: '90分钟',
+    difficulty: '中级',
+    intro: '源自张仲景《金匮要略》的经典药膳方。当归补血活血，生姜温中散寒，羊肉温阳暖肾，三味合用为冬季温补佳品，特别适合手脚冰凉、畏寒怕冷的阳虚体质。',
+    ingredients: [
+      { name: '当归', quantity: '15克', icon: 'Flame' },
+      { name: '生姜', quantity: '30克', icon: 'Sun' },
+      { name: '羊肉（带骨）', quantity: '500克', icon: 'Award' },
+      { name: '料酒', quantity: '15毫升', icon: 'Droplet' },
+      { name: '枸杞子', quantity: '5克', icon: 'Eye' }
+    ],
+    steps: [
+      '羊肉切块，冷水下锅加料酒焯水去膻，捞出洗净。',
+      '当归用清水浸泡15分钟，生姜洗净切片。',
+      '将羊肉、当归、姜片放入砂锅，加清水约2000毫升。',
+      '大火煮沸后撇去浮沫，转小火慢炖80分钟。',
+      '出锅前10分钟加入枸杞子，加少许盐调味。'
+    ],
+    image: HERB_IMAGES.r5
+  },
+  {
+    id: 'r6',
+    name: '银耳莲子羹',
+    benefits: ['滋阴润肺', '养心安神', '美容养颜'],
+    time: '45分钟',
+    difficulty: '入门',
+    intro: '银耳滋阴润肺被誉为"平民燕窝"，搭配莲子清心安神、百合润肺止咳、冰糖润燥，四味甘润之品共奏滋阴润燥之功，适合阴虚体质、干咳咽干、皮肤干燥者。',
+    ingredients: [
+      { name: '银耳（干）', quantity: '15克', icon: 'Droplet' },
+      { name: '莲子（去心）', quantity: '20克', icon: 'Heart' },
+      { name: '百合（干）', quantity: '10克', icon: 'Leaf' },
+      { name: '枸杞子', quantity: '5克', icon: 'Eye' },
+      { name: '冰糖', quantity: '适量', icon: 'Flame' }
+    ],
+    steps: [
+      '银耳提前用温水泡发2小时，撕成小朵，去除黄色根部。',
+      '莲子、百合提前用清水浸泡30分钟。',
+      '将银耳、莲子、百合放入炖盅，加清水约800毫升。',
+      '隔水炖或小火煮40分钟，至银耳出胶、汤汁粘稠。',
+      '出锅前5分钟加入枸杞子和冰糖，冰糖溶化即可。'
+    ],
+    image: HERB_IMAGES.r6
+  },
+  {
+    id: 'r7',
+    name: '山楂陈皮消食茶',
+    benefits: ['消食化积', '理气健脾', '降脂解腻'],
+    time: '15分钟',
+    difficulty: '入门',
+    intro: '山楂消食化积善消肉食油腻，陈皮理气健脾燥湿化痰，麦芽消米面食积，三味合用为餐后消食佳饮，适合饮食过量、脘腹胀满、消化不良者。',
+    ingredients: [
+      { name: '山楂（干）', quantity: '10克', icon: 'Award' },
+      { name: '陈皮', quantity: '5克', icon: 'Leaf' },
+      { name: '炒麦芽', quantity: '10克', icon: 'Sun' },
+      { name: '冰糖', quantity: '适量', icon: 'Flame' }
+    ],
+    steps: [
+      '山楂、陈皮、炒麦芽用清水快速冲洗一遍。',
+      '将所有材料放入养生壶或砂锅，加清水约600毫升。',
+      '大火煮沸后转小火煮10分钟。',
+      '加入冰糖搅拌至溶化，滤出药渣即可饮用。',
+      '饭后半小时温服，消食效果最佳。'
+    ],
+    image: HERB_IMAGES.r7
+  },
+  {
+    id: 'r8',
+    name: '桂圆红枣安神茶',
+    benefits: ['养血安神', '补心益脾', '改善睡眠'],
+    time: '20分钟',
+    difficulty: '入门',
+    intro: '桂圆补心脾、益气血，红枣养血安神，枸杞滋补肝肾，三味甘温之品共奏养血安神之功，适合心血不足、失眠多梦、精神疲倦者，晚间饮用有助入眠。',
+    ingredients: [
+      { name: '桂圆肉', quantity: '10克', icon: 'Heart' },
+      { name: '红枣（去核）', quantity: '6枚', icon: 'Shield' },
+      { name: '枸杞子', quantity: '5克', icon: 'Eye' },
+      { name: '红糖', quantity: '适量', icon: 'Flame' }
+    ],
+    steps: [
+      '红枣洗净去核切片，桂圆肉用清水稍泡。',
+      '将桂圆肉、红枣片放入杯中或小壶。',
+      '加入沸水约400毫升，盖上盖子闷泡15分钟。',
+      '加入枸杞子和红糖，再闷泡3分钟至红糖溶化。',
+      '睡前1小时温服，安神助眠效果最佳。'
+    ],
+    image: HERB_IMAGES.r8
   }
 ];
 

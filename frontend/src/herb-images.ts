@@ -22,4 +22,10 @@ export const HERB_IMAGES: Record<string, string> = {
   h18: '/uploads/herbs/熟地黄.png',
   h19: '/uploads/herbs/肉桂.png',
   h20: '/uploads/herbs/酸枣仁.png',
+  // Recipes
+  r4: '/uploads/recipes/四神汤.png',
+  r5: '/uploads/recipes/当归生姜羊肉汤.png',
+  r6: '/uploads/recipes/银耳莲子羹.png',
+  r7: '/uploads/recipes/山楂陈皮消食茶.png',
+  r8: '/uploads/recipes/桂圆红枣安神茶.png',
 };
