@@ -1,10 +1,12 @@
 """
 Diagnose routes - powered by the LangGraph TCM Agent.
 """
-from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
+import json
 import base64
 import traceback
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
+from fastapi.responses import StreamingResponse
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.database import get_db
 from app.schemas.schemas import DiagnoseRequest, DiagnoseResult, ConsultationCreate
@@ -211,3 +213,79 @@ async def diagnose_image(
     ))
     result.consultation_id = consult.id
     return result
+
+
+@router.post("/stream")
+async def diagnose_stream(
+    data: DiagnoseRequest,
+    current_user=Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """SSE 流式诊断——Agent 思考过程实时推送，最终回复逐字显示。"""
+    if not data.symptoms.strip():
+        raise HTTPException(status_code=400, detail="请输入症状描述")
+
+    from app.agent.graph import get_tcm_agent
+    from langchain_core.messages import HumanMessage
+
+    user_ctx = None
+    if current_user.constitution and current_user.constitution not in ("未测试", ""):
+        user_ctx = f"该用户已知体质类型为【{current_user.constitution}】。"
+
+    user_message = data.symptoms
+    if data.image_base64:
+        try:
+            from app.agent.llm import get_vision_llm
+            from langchain_core.messages import HumanMessage as HMsg
+            vision_llm = get_vision_llm()
+            img_data = data.image_base64
+            if "," in img_data: img_data = img_data.split(",", 1)[1]
+            vr = await vision_llm.ainvoke([HMsg(content=[
+                {"type": "text", "text": "分析舌苔：舌色苔色舌形齿痕裂纹，寒热虚实。200字以内。"},
+                {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{img_data}"}},
+            ])])
+            user_message = f"【舌苔望诊】{vr.content}\n\n【症状】{data.symptoms}\n请综合辨证。"
+        except Exception: pass
+
+    agent = get_tcm_agent()
+    status_map = {
+        "assess_constitution": "正在判断您的体质类型",
+        "search_knowledge": "正在翻阅中医经典古籍",
+        "search_herbs": "正在为您匹配合适的药材",
+        "search_recipes": "正在查找对症的食疗方子",
+        "search_workouts": "正在挑选合适的养生功法",
+        "check_herb_conflicts": "正在检查药材搭配是否安全",
+        "remember_user_context": "正在记录您的体质信息",
+    }
+
+    async def event_stream():
+        full_response = ""
+        try:
+            async for event in agent.astream_events(
+                {"messages": [HumanMessage(content=user_message)], "user_context": user_ctx},
+                version="v2",
+            ):
+                kind = event.get("event", "")
+                if kind == "on_tool_start":
+                    name = event.get("name", "")
+                    msg = status_map.get(name, f"正在{name}")
+                    yield f"data: {json.dumps({'type': 'status', 'msg': msg})}\n\n"
+                elif kind == "on_chat_model_stream":
+                    chunk = event.get("data", {}).get("chunk")
+                    if chunk and hasattr(chunk, "content") and chunk.content and isinstance(chunk.content, str):
+                        full_response += chunk.content
+                        yield f"data: {json.dumps({'type': 'token', 'text': chunk.content})}\n\n"
+
+            herb_id, recipe_id, constitution = _match_content_to_herb_recipe(full_response)
+            lines = [l.strip() for l in full_response.split("\n") if l.strip()]
+            title = lines[0][:30] if lines else "AI 中医辨证分析"
+
+            consult = await create_consultation(db, current_user.id, ConsultationCreate(
+                title=title, type="tongue", symptoms=data.symptoms,
+                analysis=full_response, suggestion=full_response,
+            ))
+            yield f"data: {json.dumps({'type': 'done', 'title': title, 'herb_id': herb_id, 'recipe_id': recipe_id, 'constitution': constitution, 'consultation_id': consult.id})}\n\n"
+        except Exception as e:
+            yield f"data: {json.dumps({'type': 'error', 'msg': str(e)})}\n\n"
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")

@@ -158,6 +158,47 @@ export interface DiagnoseResult {
 export const diagnose = (symptoms: string, image_base64?: string): Promise<DiagnoseResult> =>
   api.post('/diagnose/combined', { symptoms, image_base64 }).then((r) => r.data)
 
+export interface StreamCallbacks {
+  onStatus?: (msg: string) => void
+  onToken?: (text: string) => void
+  onDone?: (result: { title: string; herb_id: string; recipe_id: string; constitution: string; consultation_id: string }) => void
+  onError?: (msg: string) => void
+}
+
+export const diagnoseStream = (symptoms: string, image_base64: string | undefined, cbs: StreamCallbacks, token: string): AbortController => {
+  const controller = new AbortController()
+  fetch('/api/diagnose/stream', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+    body: JSON.stringify({ symptoms, image_base64 }),
+    signal: controller.signal,
+  }).then(async (response) => {
+    const reader = response.body?.getReader()
+    if (!reader) return
+    const decoder = new TextDecoder()
+    let buffer = ''
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+      buffer += decoder.decode(value, { stream: true })
+      const lines = buffer.split('\n')
+      buffer = lines.pop() || ''
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          try {
+            const data = JSON.parse(line.slice(6))
+            if (data.type === 'status') cbs.onStatus?.(data.msg)
+            else if (data.type === 'token') cbs.onToken?.(data.text)
+            else if (data.type === 'done') cbs.onDone?.(data)
+            else if (data.type === 'error') cbs.onError?.(data.msg)
+          } catch {}
+        }
+      }
+    }
+  }).catch(() => {})
+  return controller
+}
+
 
 // ── Chat (multi-turn conversation) ────────────────────────────────────────────
 

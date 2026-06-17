@@ -8,7 +8,7 @@ import { useApp } from '../context/AppContext';
 import { Brain, Activity, Star, Send, Sparkles, Image, X, MessageCircle, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MOCK_HERBS, MOCK_RECIPES } from '../data';
-import { diagnose, loginGuest, sendChatMessage, syncChatLog } from '../api/services';
+import { diagnose, diagnoseStream, loginGuest, sendChatMessage, syncChatLog } from '../api/services';
 import type { ChatMessage } from '../api/services';
 
 export const Home: React.FC = () => {
@@ -31,7 +31,9 @@ export const Home: React.FC = () => {
   const [followUpText, setFollowUpText] = useState('');
   const [isFollowUpLoading, setIsFollowUpLoading] = useState(false);
   const [consultationId, setConsultationId] = useState<string | null>(null);
+  const [streamStatus, setStreamStatus] = useState<string>('');
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const streamCtrlRef = useRef<AbortController | null>(null);
 
   const quickSymptoms = [
     { label: '手脚冰冷、怕冷畏寒', text: '平时特别怕冷，经常手脚冰凉，冬天钻进被窝很久也捂不暖，稍微吃点冷的东西就觉得肚子隐隐作痛、肚子胀气。' },
@@ -84,48 +86,65 @@ export const Home: React.FC = () => {
     }
     setIsAnalyzing(true);
     setAiResult(null);
-    try {
-      let token = localStorage.getItem('tcm_token');
-      if (!token) {
+    setStreamStatus('');
+
+    let token = localStorage.getItem('tcm_token');
+    if (!token) {
+      try {
         const res = await loginGuest();
         token = res.access_token;
         localStorage.setItem('tcm_token', token);
-      }
-      const result = await diagnose(symptomText, uploadedImage ?? undefined);
-      const matched = {
-        symptoms: symptomText,
-        title: result.title,
-        diagnosis: result.diagnosis,
-        advice: result.advice,
-        herbId: result.herb_id ?? 'h1',
-        recipeId: result.recipe_id ?? 'r1',
-      };
-      setAiResult(matched);
-      const cid = result.consultation_id;
-      if (cid) setConsultationId(cid);
-      addConsultation({
-        title: matched.title,
-        type: 'tongue',
-        symptoms: matched.symptoms,
-        analysis: matched.diagnosis,
-        suggestion: matched.advice,
-      }, cid);
-      showToast('AI 中医处方研判已完成！', 'success');
-      const initialChat = [
-        { role: 'user' as const, content: symptomText },
-        { role: 'assistant' as const, content: matched.diagnosis },
-      ];
-      setChatHistory(initialChat);
-      if (cid) {
-        const json = JSON.stringify(initialChat);
-        syncChatLog(cid, json).catch(() => {});
-        updateConsultationSuggestion(cid, json);
-      }
-    } catch (err: any) {
-      showToast(err?.response?.data?.detail ?? 'AI 服务暂时不可用，请稍后重试', 'error');
-    } finally {
-      setIsAnalyzing(false);
+      } catch { token = 'guest'; }
     }
+
+    let accumulated = '';
+    const matched = {
+      symptoms: symptomText,
+      title: '辨证中...',
+      diagnosis: '',
+      advice: '',
+      herbId: 'h1',
+      recipeId: 'r1',
+    };
+    setAiResult({ ...matched });
+    setChatHistory([{ role: 'user', content: symptomText }, { role: 'assistant', content: '...' }]);
+
+    streamCtrlRef.current = diagnoseStream(symptomText, uploadedImage ?? undefined, {
+      onStatus(msg) { setStreamStatus(msg); },
+      onToken(text) {
+        accumulated += text;
+        matched.diagnosis = accumulated;
+        matched.advice = accumulated;
+        setAiResult({ ...matched });
+        setChatHistory([{ role: 'user', content: symptomText }, { role: 'assistant', content: accumulated }]);
+      },
+      onDone(data) {
+        matched.title = data.title;
+        matched.herbId = data.herb_id;
+        matched.recipeId = data.recipe_id;
+        matched.diagnosis = accumulated;
+        matched.advice = accumulated;
+        setAiResult({ ...matched });
+        setChatHistory([{ role: 'user' as const, content: symptomText }, { role: 'assistant' as const, content: accumulated }]);
+        const cid = data.consultation_id;
+        if (cid) setConsultationId(cid);
+        addConsultation({ title: data.title, type: 'tongue', symptoms: symptomText, analysis: accumulated, suggestion: accumulated }, cid);
+        if (cid) {
+          const json = JSON.stringify([{ role: 'user', content: symptomText }, { role: 'assistant', content: accumulated }]);
+          syncChatLog(cid, json).catch(() => {});
+          updateConsultationSuggestion(cid, json);
+        }
+        setIsAnalyzing(false);
+        setStreamStatus('');
+        showToast('本草精灵辨证完成！', 'success');
+      },
+      onError(msg) {
+        showToast(msg || '服务暂时不可用', 'error');
+        setIsAnalyzing(false);
+        setStreamStatus('');
+        setAiResult(null);
+      },
+    }, token || '');
   };
 
   const handleFollowUp = async (e: React.FormEvent) => {
@@ -160,12 +179,15 @@ export const Home: React.FC = () => {
   };
 
   const handleNewSession = () => {
+    streamCtrlRef.current?.abort();
     setAiResult(null);
     setChatHistory([]);
     setConsultationId(null);
     setSymptomText('');
     setUploadedImage(null);
     setImageName('');
+    setStreamStatus('');
+    setIsAnalyzing(false);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -332,11 +354,11 @@ export const Home: React.FC = () => {
                     </div>
                   </div>
                 ))}
-                {isFollowUpLoading && (
+                {(isAnalyzing || isFollowUpLoading) && (
                   <div className="flex justify-start">
                     <div className="bg-[#efeded] rounded-2xl rounded-bl-md px-4 py-2.5 flex items-center gap-1.5">
                       <Sparkles className="w-3.5 h-3.5 text-[#7ba23f] animate-spin" />
-                      <span className="text-xs text-[#747968]">辨证思考中...</span>
+                      <span className="text-xs text-[#747968]">{streamStatus || '辨证思考中...'}</span>
                     </div>
                   </div>
                 )}
