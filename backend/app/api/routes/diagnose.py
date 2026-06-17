@@ -68,11 +68,16 @@ def _match_content_to_herb_recipe(content: str) -> tuple:
     return "h1", "r8", "平和质"
 
 
-async def _run_agent(symptoms: str, image_base64: str | None) -> DiagnoseResult:
-    """Run the ReAct agent. If image provided, pre-analyze it and add to context."""
+async def _run_agent(symptoms: str, image_base64: str | None, user_constitution: str = "") -> DiagnoseResult:
+    """Run the ReAct agent with optional user constitution context."""
     from langchain_core.messages import HumanMessage
 
     try:
+        # Build user context if constitution is known
+        user_ctx = None
+        if user_constitution and user_constitution not in ("未测试", "", "Unknown"):
+            user_ctx = f"该用户已知体质类型为【{user_constitution}】，请在辨证时参考此信息，给出更个性化的建议。"
+
         user_message = symptoms
 
         # If image provided, analyze it first via Zhipu
@@ -97,7 +102,7 @@ async def _run_agent(symptoms: str, image_base64: str | None) -> DiagnoseResult:
         agent = get_tcm_agent()
         state = await agent.ainvoke({
             "messages": [HumanMessage(content=user_message)],
-            "user_context": None,
+            "user_context": user_ctx,
         })
 
         # Extract final AI response (last AI message without tool_calls)
@@ -151,7 +156,7 @@ async def diagnose_combined(
     if not data.symptoms.strip():
         raise HTTPException(status_code=400, detail="请输入症状描述")
 
-    result = await _run_agent(data.symptoms, data.image_base64)
+    result = await _run_agent(data.symptoms, data.image_base64, current_user.constitution)
 
     consult = await create_consultation(db, current_user.id, ConsultationCreate(
         title=result.title,
@@ -172,7 +177,7 @@ async def diagnose_symptom(
 ):
     if not data.symptoms.strip():
         raise HTTPException(status_code=400, detail="请输入症状描述")
-    result = await _run_agent(data.symptoms, None)
+    result = await _run_agent(data.symptoms, None, current_user.constitution)
     consult = await create_consultation(db, current_user.id, ConsultationCreate(
         title=result.title,
         type="tongue",
@@ -196,7 +201,7 @@ async def diagnose_image(
     if len(content) > 5 * 1024 * 1024:
         raise HTTPException(status_code=400, detail="图片大小不能超过 5MB")
     image_b64 = base64.b64encode(content).decode("utf-8")
-    result = await _run_agent("请根据图片进行中医望诊分析", image_b64)
+    result = await _run_agent("请根据图片进行中医望诊分析", image_b64, current_user.constitution)
     consult = await create_consultation(db, current_user.id, ConsultationCreate(
         title=result.title,
         type="tongue",

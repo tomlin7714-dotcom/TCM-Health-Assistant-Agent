@@ -41,7 +41,10 @@ async def chat(
     messages.append(HumanMessage(content=data.new_message))
 
     try:
-        state = await agent.ainvoke({"messages": messages, "user_context": None})
+        user_ctx = None
+        if current_user.constitution and current_user.constitution not in ("未测试", ""):
+            user_ctx = f"用户体质：{current_user.constitution}"
+        state = await agent.ainvoke({"messages": messages, "user_context": user_ctx})
         # Extract final response
         last = state["messages"][-1]
         reply = last.content if hasattr(last, "content") else str(last)
