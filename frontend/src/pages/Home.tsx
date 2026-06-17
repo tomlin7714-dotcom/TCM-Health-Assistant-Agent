@@ -368,7 +368,7 @@ export const Home: React.FC = () => {
           </div>
 
           {/* Bottom bar — herbs/recipes + follow-up input */}
-          {aiResult && (
+          {aiResult && !isAnalyzing && (
             <div className="shrink-0 border-t border-black/5 px-4 py-3 space-y-2.5 bg-white">
               <div className="grid grid-cols-2 gap-2">
                 {(() => { const h = getHerbNameAndImg(aiResult.herbId); return (
