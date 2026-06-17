@@ -14,19 +14,28 @@ export const Herbs: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedProperty, setSelectedProperty] = useState<string>('全部');
 
-  const properties = ['全部', '微温', '平', '微寒', '热'];
+  // 药性分组：寒→温→热，每类有专属颜色
+  const properties = [
+    { key: '全部', label: '全部本草' },
+    { key: '寒', label: '寒性', color: 'bg-blue-500/10 text-blue-700 border-blue-100' },
+    { key: '微寒', label: '微寒', color: 'bg-sky-500/10 text-sky-700 border-sky-100' },
+    { key: '平', label: '平性', color: 'bg-teal-500/10 text-teal-700 border-teal-100' },
+    { key: '微温', label: '微温', color: 'bg-amber-500/10 text-amber-700 border-amber-100' },
+    { key: '温', label: '温性', color: 'bg-orange-500/10 text-orange-700 border-orange-100' },
+    { key: '热', label: '热性', color: 'bg-rose-500/10 text-rose-700 border-rose-100' },
+    { key: '大热', label: '大热', color: 'bg-red-500/10 text-red-700 border-red-100' },
+  ];
 
-  // Search & Filter Memo
   const filteredHerbs = useMemo(() => {
     return MOCK_HERBS.filter((herb) => {
-      const matchQuery = 
+      const matchQuery =
         herb.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         herb.pinyin.toLowerCase().includes(searchQuery.toLowerCase()) ||
         herb.description.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      const matchProperty = 
+
+      const matchProperty =
         selectedProperty === '全部' || herb.property === selectedProperty;
-      
+
       return matchQuery && matchProperty;
     });
   }, [searchQuery, selectedProperty]);
@@ -36,13 +45,8 @@ export const Herbs: React.FC = () => {
   };
 
   const getPropBadgeColor = (prop: string) => {
-    switch(prop) {
-      case '热': return 'bg-rose-500/10 text-rose-700 border-rose-100';
-      case '微温': return 'bg-amber-500/10 text-amber-700 border-amber-100';
-      case '平': return 'bg-teal-500/10 text-teal-700 border-teal-100';
-      case '微寒': return 'bg-sky-500/10 text-sky-700 border-sky-100';
-      default: return 'bg-neutral-100 text-neutral-600 border-neutral-150';
-    }
+    const found = properties.find(p => p.key === prop);
+    return found?.color || 'bg-neutral-100 text-neutral-600 border-neutral-150';
   };
 
   return (
@@ -77,19 +81,18 @@ export const Herbs: React.FC = () => {
       <div className="flex flex-wrap items-center gap-2" id="herb_filters">
         <span className="text-xs font-bold text-[#747968] mr-2">药性分类：</span>
         {properties.map((prop) => {
-          const isSelected = selectedProperty === prop;
+          const isSelected = selectedProperty === prop.key;
           return (
             <button
-              key={prop}
-              id={`herb_filter_${prop}`}
-              onClick={() => setSelectedProperty(prop)}
-              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                isSelected 
-                  ? 'bg-[#7ba23f] text-white shadow-xs' 
-                  : 'bg-white border border-black/5 text-[#44493a] hover:bg-neutral-50 hover:text-[#466805]'
+              key={prop.key}
+              onClick={() => setSelectedProperty(prop.key)}
+              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer border ${
+                isSelected
+                  ? 'bg-[#7ba23f] text-white shadow-xs border-[#7ba23f]'
+                  : 'bg-white border-black/5 text-[#44493a] hover:bg-neutral-50 hover:text-[#466805]'
               }`}
             >
-              {prop === '全部' ? '全部本草' : `${prop}性`}
+              {prop.label}
             </button>
           );
         })}
