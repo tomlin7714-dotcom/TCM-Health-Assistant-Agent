@@ -607,7 +607,7 @@ export const MOCK_WORKOUTS: WorkoutItem[] = [
     actionsCount: 8,
     intro: '“八段锦”起源于宋代，是一套独立完整的健身气功功法。古人把这套动作比喻为“锦”，意为动作优美，如锦缎般柔顺，全套共八个动作，能够全面疏通十二经脉，调和五脏六腑之气。',
     image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80',
-    videoUrl: 'https://player.bilibili.com/player.html?bvid=BV1jx411m7H2&page=1&high_quality=1',
+    videoUrl: 'https://player.bilibili.com/player.html?bvid=BV1gT4y1m7ec&page=1&high_quality=1',
     actions: [
       { order: 1, title: '双手托天理三焦', keys: '吸气时双手托天，呼气时徐徐落下', role: '调理上焦、中焦、下焦，宣通肺气。' },
       { order: 2, title: '左右开弓似射雕', keys: '展肩扩胸，马步拉弓，眼注视指尖', role: '疏理肝气，矫正脊柱，健脾益胃。' },
@@ -654,6 +654,26 @@ export const MOCK_WORKOUTS: WorkoutItem[] = [
       { order: 1, title: '按揉足三里 · 健脾保胃', keys: '在外膝眼下三寸，骨旁开一横指。大拇指重按旋转揉动', role: '强健脾胃，提升中焦原能，对胃胀有神效。' },
       { order: 2, title: '按压合谷穴 · 清热止痛', keys: '手背虎口，第二掌骨中点。朝食指方向使力酸胀按压', role: '散风清热，缓解由于上火引发的头痛牙胀不适。' },
       { order: 3, title: '艾热内关穴 · 快意安神', keys: '腕横纹上两寸，两筋之间。以指尖垂直点戳按摩', role: '宽胸解郁，调理心胸气逆、心慌、神经紧张性失眠。' }
+    ]
+  },
+  {
+    id: 'w4',
+    name: '古法祛湿操',
+    subtitle: '9分钟跟练版 · 湿寒退散全身轻松',
+    teacher: '国医堂 李明辉 教授编排',
+    level: '入门',
+    students: 15680,
+    calories: 120,
+    actionsCount: 5,
+    intro: '专为湿寒体质编排的古法养生操，融合八段锦与五禽戏精华，通过拉伸、扭转、拍打等动作激活脾经和膀胱经，加速湿气排出。每天9分钟，坚持一周即可感受到身体变轻、精神变好。',
+    image: 'https://images.unsplash.com/photo-1545389336-cf090694435e?auto=format&fit=crop&w=600&q=80',
+    videoUrl: 'https://player.bilibili.com/player.html?bvid=BV194YyzEE54&page=1&high_quality=1',
+    actions: [
+      { order: 1, title: '开天辟地 · 唤醒阳气', keys: '双脚与肩同宽，双臂从体侧缓缓上举过头，掌心朝天，踮脚尖拉伸脊柱，保持3个呼吸。', role: '拉伸督脉，振奋全身阳气，打通任督二脉之气机。' },
+      { order: 2, title: '扭转乾坤 · 梳理带脉', keys: '双手叉腰，以腰为轴缓缓左右扭转上身，头部随之转动，左右各8次。', role: '疏通带脉和胆经，促进腰腹部气血循环，驱散中焦寒湿。' },
+      { order: 3, title: '拍打脾经 · 运化湿气', keys: '双手空心掌，沿大腿内侧脾经循行路线由下往上轻拍，每条腿拍打30秒。', role: '激活脾经气血，增强脾胃运化水湿功能，改善浮肿和困重。' },
+      { order: 4, title: '金鸡独立 · 引火归元', keys: '单腿站立，另一脚贴于内侧膝部，双手合十于胸前，保持平衡30秒后换腿。', role: '引气血下行，补肾固本，改善上热下寒体质，增强核心稳定。' },
+      { order: 5, title: '收功归田 · 气沉丹田', keys: '双脚分开，双手从体侧缓缓下压至丹田位置，闭目静立，深呼吸3次。', role: '将运动产生的阳气收敛入丹田，固本培元，使全身气血归于平和。' }
     ]
   }
 ];
