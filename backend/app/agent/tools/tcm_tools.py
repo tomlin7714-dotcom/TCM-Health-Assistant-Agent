@@ -94,4 +94,14 @@ def remember_user_context(constitution: str, preferences: str) -> str:
     return f"已记录。体质类型：{constitution}，偏好：{preferences}。后续推荐将基于这些信息进行个性化调整。"
 
 
-TCM_TOOLS = [search_herbs, search_recipes, search_workouts, assess_constitution, remember_user_context]
+@tool
+def search_knowledge(query: str) -> str:
+    """搜索中医经典知识库。输入关键词（如'阳虚''失眠''脾胃''气血'等），返回《黄帝内经》《伤寒论》《神农本草经》等经典原文引用。用于在辨证时引用经典理论依据，增强回答权威性。"""
+    from app.agent.tools.knowledge_base import search_knowledge_base
+    results = search_knowledge_base(query, top_k=4)
+    if not results:
+        return "未找到相关经典原文。可尝试搜索：阳虚、阴虚、失眠、脾胃、气血、养生等。"
+    return "\n\n".join(f"📖 {r['quote']}\n  ——{r['source']}" for r in results)
+
+
+TCM_TOOLS = [search_herbs, search_recipes, search_workouts, assess_constitution, remember_user_context, search_knowledge]
