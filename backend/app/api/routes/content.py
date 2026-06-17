@@ -330,7 +330,7 @@ RECIPES: List[RecipeOut] = [
                "武火煮沸，随后转文火慢熬15分钟，使药性成分充分溶出。",
                "最后5分钟放入老红糖，缓缓搅拌至完全融化。",
                "趁热代茶饮，微微出汗为最佳，能迅速驱寒暖手暖脚。"],
-        image="https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=600&q=80",
+        image="/uploads/recipes/冬日红枣姜糖茶.png",
     ),
     RecipeOut(
         id="r2", name="杞菊清肝明目茶",
@@ -348,7 +348,7 @@ RECIPES: List[RecipeOut] = [
                "倒入刚沸腾的开水约400毫升，盖上杯盖进行闷泡。",
                "静置闷泡10分钟，等菊花徐徐绽放，茶汤色泽渐趋淡黄。",
                "温服饮用。可反复冲泡2-3次，最后将枸杞子一同嚼服。"],
-        image="https://images.unsplash.com/photo-1597481499750-3e6b22637e12?auto=format&fit=crop&w=600&q=80",
+        image="/uploads/recipes/杞菊清肝明目茶.png",
     ),
     RecipeOut(
         id="r3", name="黑米红豆健脾粥",
@@ -367,7 +367,7 @@ RECIPES: List[RecipeOut] = [
                "砂锅置于火上，大火烧沸后撇去浮沫。",
                "转成极小火，慢熬约40分钟，中途搅拌数次防粘底。",
                "待粥体粘稠，红豆煮至酥软爆花，关火闷5分钟，温热食用。"],
-        image="https://images.unsplash.com/photo-1536304997881-a372c179924b?auto=format&fit=crop&w=600&q=80",
+        image="/uploads/recipes/黑米红豆健脾粥.png",
     ),
     RecipeOut(
         id="r4", name="四神汤",

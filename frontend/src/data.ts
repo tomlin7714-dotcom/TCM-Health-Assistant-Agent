@@ -432,7 +432,7 @@ export const MOCK_RECIPES: RecipeItem[] = [
       '最后5分钟放入老红糖，缓缓搅拌至红糖完全融化。',
       '趁热盛出代茶饮，微微出汗为最佳，能够迅速驱寒，暖手暖脚。'
     ],
-    image: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=600&q=80'
+    image: HERB_IMAGES.r1
   },
   {
     id: 'r2',
@@ -454,7 +454,7 @@ export const MOCK_RECIPES: RecipeItem[] = [
       '静置闷泡10分钟，等菊花徐徐绽放，茶汤色泽渐趋淡黄。',
       '温服饮用。可反复冲泡2-3次，直至茶味变淡，最后可将枸杞子一同嚼服获取全部营养。'
     ],
-    image: 'https://images.unsplash.com/photo-1597481499750-3e6b22637e12?auto=format&fit=crop&w=600&q=80'
+    image: HERB_IMAGES.r2
   },
   {
     id: 'r3',
@@ -477,7 +477,7 @@ export const MOCK_RECIPES: RecipeItem[] = [
       '转成极小火，盖上砂锅盖，慢熬约40分钟，中途搅拌数次防粘底。',
       '待粥体粘稠，红豆煮至酥软爆花，关火闷5分钟，温热食用，大健脾阳。'
     ],
-    image: 'https://images.unsplash.com/photo-1536304997881-a372c179924b?auto=format&fit=crop&w=600&q=80'
+    image: HERB_IMAGES.r3
   },
   {
     id: 'r4',
