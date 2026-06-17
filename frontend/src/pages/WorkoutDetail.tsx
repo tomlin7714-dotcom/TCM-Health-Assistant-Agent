@@ -103,41 +103,47 @@ export const WorkoutDetail: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        {/* Left: Video Cover screen representation */}
+        {/* Left: Video player — real video or cover image */}
         <div className="lg:col-span-6 space-y-6">
-          <div className="bg-neutral-950 border border-black/10 rounded-3xl p-2 shadow-lg relative overflow-hidden group">
-            {/* Visual emulated player size */}
+          <div className="bg-neutral-950 border border-black/10 rounded-3xl p-2 shadow-lg relative overflow-hidden">
             <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-neutral-900 flex items-center justify-center">
-              
-              {/* Cover scenic background */}
-              <img 
-                src={workout.image} 
-                alt={workout.name} 
-                referrerPolicy="no-referrer"
-                className="absolute inset-0 w-full h-full object-cover opacity-80"
-              />
 
-              {/* Black overlay */}
-              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/25 transition-all" />
-
-              {/* Pulsing Play Button */}
-              <button 
-                onClick={startBreathingGuide}
-                className="relative z-10 w-16 h-16 rounded-full bg-white text-[#466805] hover:bg-[#c5f183] flex items-center justify-center shadow-lg active:scale-95 hover:scale-105 transition-all duration-300 pointer-events-auto cursor-pointer"
-                title="Watch demonstration"
-              >
-                <Play className="w-6 h-6 fill-current ml-1" />
-              </button>
-
-              {/* Bottom level bar overlay */}
-              <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center z-10">
-                <span className="px-2.5 py-1 rounded bg-black/60 text-white text-[10px] font-mono select-none">
-                  00:00 / 12:40 (演示)
-                </span>
-                <span className="px-2.5 py-1 rounded bg-[#c5f183] text-[#466805] text-[10px] font-black uppercase">
-                  国医视频导授
-                </span>
-              </div>
+              {workout.videoUrl ? (
+                /* 真实视频嵌入（B站iframe） */
+                <iframe
+                  src={workout.videoUrl}
+                  className="absolute inset-0 w-full h-full"
+                  allowFullScreen
+                  allow="autoplay; encrypted-media"
+                  title={workout.name}
+                />
+              ) : (
+                /* 无视频时显示封面+调息按钮 */
+                <React.Fragment>
+                  <img
+                    src={workout.image}
+                    alt={workout.name}
+                    referrerPolicy="no-referrer"
+                    className="absolute inset-0 w-full h-full object-cover opacity-80"
+                  />
+                  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/25 transition-all" />
+                  <button
+                    onClick={startBreathingGuide}
+                    className="relative z-10 w-16 h-16 rounded-full bg-white text-[#466805] hover:bg-[#c5f183] flex items-center justify-center shadow-lg active:scale-95 hover:scale-105 transition-all duration-300 cursor-pointer"
+                    title="调息练习"
+                  >
+                    <Play className="w-6 h-6 fill-current ml-1" />
+                  </button>
+                  <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center z-10">
+                    <span className="px-2.5 py-1 rounded bg-black/60 text-white text-[10px] font-mono select-none">
+                      国医视频导授
+                    </span>
+                    <span className="px-2.5 py-1 rounded bg-[#c5f183] text-[#466805] text-[10px] font-black uppercase">
+                      {workout.name}
+                    </span>
+                  </div>
+                </React.Fragment>
+              )}
             </div>
           </div>
 

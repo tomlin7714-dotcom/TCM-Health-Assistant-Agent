@@ -64,6 +64,7 @@ export interface WorkoutItem {
   actionsCount: number;   // 动作数量
   intro: string;          // 简介
   image: string;
+  videoUrl?: string;       // 视频链接（B站嵌入URL或视频直链）
   actions: { order: number; title: string; keys: string; role: string }[];
 }
 

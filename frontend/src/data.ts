@@ -607,6 +607,7 @@ export const MOCK_WORKOUTS: WorkoutItem[] = [
     actionsCount: 8,
     intro: '“八段锦”起源于宋代，是一套独立完整的健身气功功法。古人把这套动作比喻为“锦”，意为动作优美，如锦缎般柔顺，全套共八个动作，能够全面疏通十二经脉，调和五脏六腑之气。',
     image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80',
+    videoUrl: 'https://player.bilibili.com/player.html?bvid=BV1jx411m7H2&page=1&high_quality=1',
     actions: [
       { order: 1, title: '双手托天理三焦', keys: '吸气时双手托天，呼气时徐徐落下', role: '调理上焦、中焦、下焦，宣通肺气。' },
       { order: 2, title: '左右开弓似射雕', keys: '展肩扩胸，马步拉弓，眼注视指尖', role: '疏理肝气，矫正脊柱，健脾益胃。' },
@@ -629,6 +630,7 @@ export const MOCK_WORKOUTS: WorkoutItem[] = [
     actionsCount: 4,
     intro: '太极导引法是一套注重呼吸吐纳与柔和展体完美结合的功法，适合清晨起床后，在清晨的第一缕微光中，顺应大自然生发之气，调理奇经八脉，振奋阳气。',
     image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80',
+    videoUrl: 'https://player.bilibili.com/player.html?bvid=BV1Sx411R7yZ&page=1&high_quality=1',
     actions: [
       { order: 1, title: '紫气东来迎太虚', keys: '面向东方，两腿开立，双臂沿两侧提至胸前，做气降丹田', role: '吐故纳新，将大自然清阳之气导入体内。' },
       { order: 2, title: '拨云见日抱合一', keys: '两手从内向外分云，下沉，呈太极抱球动作', role: '平衡体内阴阳之气，使清气升浊气降。' },
@@ -647,6 +649,7 @@ export const MOCK_WORKOUTS: WorkoutItem[] = [
     actionsCount: 3,
     intro: '通过双手手指，对身体的关键敏感腧穴进行适度的按、摩、推、揉，可以达到通经络、调脏腑、减缓疲劳的作用。本指南主要针对上班、看手机的现代亚健康体质进行选穴。',
     image: 'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?auto=format&fit=crop&w=600&q=80',
+    videoUrl: 'https://player.bilibili.com/player.html?bvid=BV1kW41127Xh&page=1&high_quality=1',
     actions: [
       { order: 1, title: '按揉足三里 · 健脾保胃', keys: '在外膝眼下三寸，骨旁开一横指。大拇指重按旋转揉动', role: '强健脾胃，提升中焦原能，对胃胀有神效。' },
       { order: 2, title: '按压合谷穴 · 清热止痛', keys: '手背虎口，第二掌骨中点。朝食指方向使力酸胀按压', role: '散风清热，缓解由于上火引发的头痛牙胀不适。' },
