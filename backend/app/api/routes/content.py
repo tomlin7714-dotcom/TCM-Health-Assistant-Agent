@@ -686,7 +686,7 @@ WORKOUTS: List[WorkoutOut] = [
         subtitle="国家体育总局推荐气功功法", teacher="国医堂 张景明 教授指导",
         level="入门", students=12480, calories=180, actionsCount=8,
         intro="八段锦起源于宋代，是一套独立完整的健身气功功法，全套共八个动作，能全面疏通十二经脉，调和五脏六腑之气。",
-        image="https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80",
+        image="http://i1.hdslb.com/bfs/archive/f120cba41197becec8dd7c8e56e9b3d4744ed7d7?auto=format&fit=crop&w=600&q=80",
         video_url="https://player.bilibili.com/player.html?bvid=BV1gT4y1m7ec&page=1&high_quality=1",
         actions=[
             WorkoutActionOut(order=1, title="双手托天理三焦", keys="吸气时双手托天，呼气时徐徐落下", role="调理上焦、中焦、下焦，宣通肺气。"),
@@ -731,7 +731,7 @@ WORKOUTS: List[WorkoutOut] = [
         subtitle="9分钟跟练版·湿寒退散全身轻松", teacher="国医堂 李明辉 教授编排",
         level="入门", students=15680, calories=120, actionsCount=8,
         intro="专为湿寒体质编排的古法养生操，融合八段锦与五禽戏精华，通过拉伸、击掌、跳跃等动作激活全身经络，加速湿气排出。每天9分钟，坚持一周即可感受到身体变轻、精神变好。",
-        image="https://images.unsplash.com/photo-1545389336-cf090694435e?auto=format&fit=crop&w=600&q=80",
+        image="http://i1.hdslb.com/bfs/archive/d357696e95d3557a448798f35904eaccfcd1094a?auto=format&fit=crop&w=600&q=80",
         video_url="https://player.bilibili.com/player.html?bvid=BV194YyzEE54&page=1&high_quality=1",
         actions=[
             WorkoutActionOut(order=1, title="上下齊發", keys="收紧核心，吸气踮起脚跟，呼气脚跟踩地，左右手臂交替向上下伸展。", role="生发阳气、排出湿寒、缓解疲劳、促进新陈代谢。"),
@@ -749,7 +749,7 @@ WORKOUTS: List[WorkoutOut] = [
         subtitle="增强食欲·促进消化·8式调理", teacher="国医堂 王守义 教授编排",
         level="入门", students=18920, calories=150, actionsCount=8,
         intro="本操融合传统养生功法，通过八个动作系统调理脾胃功能。结合双手上撑下按、深蹲刺激脾经、躯干扭转按摩脏腑、拍打腹股沟通下焦等技法，节奏舒缓，适合日常调理脾胃虚弱、食欲不振、腹胀消化不良等问题。建议每日练习15-20分钟。",
-        image="https://images.unsplash.com/photo-1552196563-55cd4e45efb3?auto=format&fit=crop&w=600&q=80",
+        image="http://i1.hdslb.com/bfs/archive/ee9c645220116eacca001766b46c6960f6ce8b81?auto=format&fit=crop&w=600&q=80",
         video_url="https://player.bilibili.com/player.html?bvid=BV1A9VwzwEdY&page=1&high_quality=1",
         actions=[
             WorkoutActionOut(order=1, title="八段锦单举·疏肝健脾", keys="双手上撑下按做对称拉伸，左右交替，配合深呼吸，拉伸时吸气、还原时呼气。", role="刺激脾胃经络，促进气血运行，调和肝脾之气。"),
@@ -767,7 +767,7 @@ WORKOUTS: List[WorkoutOut] = [
         subtitle="增强能量·提升阳气·8式导引", teacher="国医堂 赵济民 教授编排",
         level="入门", students=21350, calories=180, actionsCount=8,
         intro="本操融合传统导引术与经络学说，通过八个动作激发阳气、疏通三焦，专攻能量不足、畏寒体虚等问题。建议晨起练习，配合鼻吸口呼，长期坚持可改善疲劳乏力、手脚冰凉等阳虚症状，提升全天能量状态。",
-        image="https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80",
+        image="http://i1.hdslb.com/bfs/archive/f120cba41197becec8dd7c8e56e9b3d4744ed7d7?auto=format&fit=crop&w=600&q=80",
         video_url="https://player.bilibili.com/player.html?bvid=BV1PRVPzuE4j&page=1&high_quality=1",
         actions=[
             WorkoutActionOut(order=1, title="上下齐发·增加正气", keys="双臂上举下按配合踮足，上举时吸气踮脚，下按时呼气落脚跟，牵拉任督二脉。", role="疏通全身经络，激活气血循环，扶助正气。"),
