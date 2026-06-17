@@ -104,4 +104,46 @@ def search_knowledge(query: str) -> str:
     return "\n\n".join(f"📖 {r['quote']}\n  ——{r['source']}" for r in results)
 
 
-TCM_TOOLS = [search_herbs, search_recipes, search_workouts, assess_constitution, remember_user_context, search_knowledge]
+@tool
+def check_herb_conflicts(herb_names: str) -> str:
+    """检查药材配伍禁忌。输入药材名称列表（用逗号或顿号分隔），检查是否存在十八反、十九畏等配伍禁忌。用于在推荐药材方案后验证安全性，确保不会推荐互相冲突的药材组合。"""
+    conflicts = {
+        ("甘草", "甘遂"): "十八反：甘草反甘遂，二者不可同用。",
+        ("甘草", "大戟"): "十八反：甘草反大戟，二者不可同用。",
+        ("甘草", "海藻"): "十八反：甘草反海藻，二者不可同用。",
+        ("甘草", "芫花"): "十八反：甘草反芫花，二者不可同用。",
+        ("半夏", "川乌"): "十八反：半夏反川乌（附子），二者不可同用。",
+        ("半夏", "草乌"): "十八反：半夏反草乌，二者不可同用。",
+        ("半夏", "附子"): "十八反：半夏反附子，二者不可同用。",
+        ("瓜蒌", "川乌"): "十八反：瓜蒌反川乌（附子），二者不可同用。",
+        ("瓜蒌", "附子"): "十八反：瓜蒌反附子，二者不可同用。",
+        ("贝母", "川乌"): "十八反：贝母反川乌（附子），二者不可同用。",
+        ("贝母", "附子"): "十八反：贝母反附子，二者不可同用。",
+        ("白及", "川乌"): "十八反：白及反川乌（附子），二者不可同用。",
+        ("白蔹", "川乌"): "十八反：白蔹反川乌（附子），二者不可同用。",
+        ("人参", "藜芦"): "十八反：人参反藜芦，二者不可同用。",
+        ("丹参", "藜芦"): "十八反：丹参反藜芦，二者不可同用。",
+        ("细辛", "藜芦"): "十八反：细辛反藜芦，二者不可同用。",
+        ("人参", "五灵脂"): "十九畏：人参畏五灵脂，二者不宜同用。",
+        ("丁香", "郁金"): "十九畏：丁香畏郁金，二者不宜同用。",
+        ("肉桂", "赤石脂"): "十九畏：官桂（肉桂）畏赤石脂，二者不宜同用。",
+    }
+
+    names = [n.strip() for n in herb_names.replace("、", ",").split(",") if n.strip()]
+    found = []
+    for i in range(len(names)):
+        for j in range(i + 1, len(names)):
+            key = (names[i], names[j])
+            key_rev = (names[j], names[i])
+            if key in conflicts:
+                found.append(conflicts[key])
+            elif key_rev in conflicts:
+                found.append(conflicts[key_rev])
+
+    if not found:
+        return f"经检查，{herb_names}中未发现已知的十八反十九畏配伍禁忌。此方案在配伍层面是安全的。"
+
+    return "⚠️ 发现配伍禁忌：\n" + "\n".join(found)
+
+
+TCM_TOOLS = [search_herbs, search_recipes, search_workouts, assess_constitution, remember_user_context, search_knowledge, check_herb_conflicts]
