@@ -12,18 +12,44 @@ import { motion } from 'motion/react';
 export const Recipes: React.FC = () => {
   const { navigateTo, toggleFavorite, isFavorite, showToast } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedBenefit, setSelectedBenefit] = useState<string>('全部');
+  const [selectedBenefit, setSelectedBenefit] = useState<string>('全部'); // 默认全部药膳
 
-  const benefitCategories = ['全部', '温中散寒', '明目益肝', '健脾养胃'];
+  // 功效分类 → 关键词映射（模糊匹配，一个食谱可命中多个分类）
+  const benefitCategories = [
+    { label: '全部药膳', key: '全部' },
+    { label: '温中散寒', key: '温中散寒' },
+    { label: '明目益肝', key: '明目益肝' },
+    { label: '健脾养胃', key: '健脾养胃' },
+    { label: '养血安神', key: '养血安神' },
+    { label: '滋阴润肺', key: '滋阴润肺' },
+    { label: '消食化积', key: '消食化积' },
+    { label: '补血活血', key: '补血活血' },
+  ];
+
+  // 每个分类关键词可命中多个相近功效
+  const categoryKeywords: Record<string, string[]> = {
+    '温中散寒': ['温中', '散寒', '暖身', '驱寒', '暖胃', '暖经'],
+    '明目益肝': ['明目', '益肝', '清肝', '眼', '目'],
+    '健脾养胃': ['健脾', '养胃', '暖胃', '补脾', '益脾', '祛湿', '消肿', '补中'],
+    '养血安神': ['安神', '养心', '补心', '睡眠', '失眠', '助眠'],
+    '滋阴润肺': ['滋阴', '润肺', '润燥', '养阴', '美容'],
+    '消食化积': ['消食', '化积', '解腻', '降脂', '理气'],
+    '补血活血': ['补血', '活血', '养血', '乌发', '温经'],
+  };
 
   const filteredRecipes = useMemo(() => {
     return MOCK_RECIPES.filter((recipe) => {
-      const matchQuery = 
+      const matchQuery =
         recipe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         recipe.intro.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      const matchCategory = 
-        selectedBenefit === '全部' || recipe.benefits.includes(selectedBenefit);
+
+      let matchCategory = true;
+      if (selectedBenefit !== '全部') {
+        const keywords = categoryKeywords[selectedBenefit] || [];
+        matchCategory = recipe.benefits.some(
+          (b: string) => keywords.some((kw: string) => b.includes(kw))
+        );
+      }
 
       return matchQuery && matchCategory;
     });
@@ -65,19 +91,19 @@ export const Recipes: React.FC = () => {
       <div className="flex flex-wrap items-center gap-2" id="recipe_filters">
         <span className="text-xs font-bold text-[#747968] mr-2">调护功效：</span>
         {benefitCategories.map((cat) => {
-          const isSelected = selectedBenefit === cat;
+          const isSelected = selectedBenefit === cat.key;
           return (
             <button
-              key={cat}
-              id={`recipe_filter_${cat}`}
-              onClick={() => setSelectedBenefit(cat)}
+              key={cat.key}
+              id={`recipe_filter_${cat.key}`}
+              onClick={() => setSelectedBenefit(cat.key)}
               className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                isSelected 
-                  ? 'bg-[#7ba23f] text-white shadow-xs' 
+                isSelected
+                  ? 'bg-[#7ba23f] text-white shadow-xs'
                   : 'bg-white border border-black/5 text-[#44493a] hover:bg-neutral-50 hover:text-[#466805]'
               }`}
             >
-              {cat === '全部' ? '全部药膳' : cat}
+              {cat.label}
             </button>
           );
         })}
