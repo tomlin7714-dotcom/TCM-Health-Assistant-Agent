@@ -547,6 +547,24 @@ WORKOUTS: List[WorkoutOut] = [
             WorkoutActionOut(order=8, title="臀后弹踢·引火归元", keys="双手叉腰，左右脚交替向后弹踢，脚跟尽量触碰臀部，保持身体稳定。", role="刺激脾胃经，调和气血，改善上热下寒体质。"),
         ],
     ),
+    WorkoutOut(
+        id="w6", name="古法健身升阳补气操",
+        subtitle="增强能量·提升阳气·8式导引", teacher="国医堂 赵济民 教授编排",
+        level="入门", students=21350, calories=180, actionsCount=8,
+        intro="本操融合传统导引术与经络学说，通过八个动作激发阳气、疏通三焦，专攻能量不足、畏寒体虚等问题。建议晨起练习，配合鼻吸口呼，长期坚持可改善疲劳乏力、手脚冰凉等阳虚症状，提升全天能量状态。",
+        image="https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80",
+        video_url="https://player.bilibili.com/player.html?bvid=BV1PRVPzuE4j&page=1&high_quality=1",
+        actions=[
+            WorkoutActionOut(order=1, title="上下齐发·增加正气", keys="双臂上举下按配合踮足，上举时吸气踮脚，下按时呼气落脚跟，牵拉任督二脉。", role="疏通全身经络，激活气血循环，扶助正气。"),
+            WorkoutActionOut(order=2, title="前后踮足·强腰固肾", keys="双脚与肩同宽，反复踮起脚跟再落下，身体保持直立，双手自然垂放体侧。", role="刺激涌泉穴与肾经，改善腰膝酸软，强化先天元气。"),
+            WorkoutActionOut(order=3, title="马步升阳·提升阳气", keys="双脚分开略宽于肩，屈膝半蹲成马步，双手握拳收于腰间，保持脊柱中正。", role="打通肾经与督脉，驱逐寒湿邪气，缓解下肢冰凉。"),
+            WorkoutActionOut(order=4, title="踮足展胸·补益肾气", keys="踮脚同时双臂向后扩胸展开，充分拉伸膈肌与胸胁区域，保持3个呼吸后放松。", role="促进肺肾气机交汇，增强呼吸深度，补益肾气。"),
+            WorkoutActionOut(order=5, title="升阳跳·增强气力", keys="弹跳配合手臂上举，落地时屈膝缓冲，动作轻快有节奏，呼吸自然配合。", role="加速气血升发，改善代谢迟缓，适合久坐人群。"),
+            WorkoutActionOut(order=6, title="踮脚后扩拳·疏通肩背", keys="踮脚站立，双手握拳向后扩胸出拳，展肩扩背，保持平衡。", role="联动手三阳经与膀胱经，缓解肩颈僵硬，提升心肺功能。"),
+            WorkoutActionOut(order=7, title="踮脚抓手·固肾强腰", keys="踮脚站立，双手向前做抓握虚空的反复动作，刺激手掌劳宫穴。", role="实现心肾相交，改善手部麻木，固肾强腰。"),
+            WorkoutActionOut(order=8, title="拨天助肋·通调三焦", keys="双臂上托过头向两侧展开，身体微微侧弯拉伸胁肋，左右交替。", role="疏导三焦经气机，调和上热下寒体质，缓解胸闷腹胀。"),
+        ],
+    ),
 ]
 
 # ── Routers ───────────────────────────────────────────────────────────────────
